@@ -16,7 +16,7 @@ function build {
         DOCKERFILE_PATH_NAME="DOCKERFILE_PATH_${CONTAINER//-/}"
         DOCKERFILE_PATH="${SCRIPT_DIR}/${!DOCKERFILE_PATH_NAME}/Dockerfile"
 
-        docker build -f "${DOCKERFILE_PATH}" "${CONTEXT_PATH}"
+        docker build -f "${DOCKERFILE_PATH}" "${CONTEXT_PATH}" --build-arg APPLICATION_JAR_NAME=$(ls ./target/chatty-pie-connector*.jar | xargs -n 1 basename)
     done
 }
 
