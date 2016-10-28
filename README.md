@@ -3,7 +3,7 @@
 A minimal example of a connector using the service-integration SDK
 
 
-##Running the applicaiton
+##Running the application
 To run locally, start the main class in 
 ```
 ChattyPieConnectorApplication
