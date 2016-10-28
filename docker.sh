@@ -15,8 +15,11 @@ function build {
         CONTEXT_PATH="${SCRIPT_DIR}/${!CONTEXT_PATH_NAME}"
         DOCKERFILE_PATH_NAME="DOCKERFILE_PATH_${CONTAINER//-/}"
         DOCKERFILE_PATH="${SCRIPT_DIR}/${!DOCKERFILE_PATH_NAME}/Dockerfile"
+        BUILD_OUTPUT_DIRECTORY=$(./mvnw org.apache.maven.plugins:maven-help-plugin:2.2:evaluate -Dexpression=project.build.directory | grep -v "[INFO]")
+        echo "Working directory: "
+        echo $(pwd)
 
-        docker build -f "${DOCKERFILE_PATH}" "${CONTEXT_PATH}" --build-arg APPLICATION_JAR_NAME=$(ls ./target/chatty-pie-connector*.jar | xargs -n 1 basename)
+        docker build -f "${DOCKERFILE_PATH}" "${CONTEXT_PATH}" --build-arg APPLICATION_JAR_NAME=$(ls ${BUILD_OUTPUT_DIRECTORY}/chatty-pie-connector*.jar | xargs -n 1 basename)
     done
 }
 
