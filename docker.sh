@@ -19,7 +19,7 @@ function build {
         echo "Working directory: "
         echo $(pwd)
 
-        docker build -f "${DOCKERFILE_PATH}" "${CONTEXT_PATH}" --build-arg APPLICATION_JAR_NAME=$(ls ${BUILD_OUTPUT_DIRECTORY}/chatty-pie-connector*.jar | xargs -n 1 basename)
+        docker build -f "${DOCKERFILE_PATH}" "${CONTEXT_PATH}"
     done
 }
 
