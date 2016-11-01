@@ -16,7 +16,7 @@ import com.chattypie.processor.SubscriptionOrderProcessor;
 @Import(ConnectorSdkConfiguration.class)
 public class RootConfiguration {
 
-	@Value("${account.creation.endpoint}")
+	@Value("${chatty.pie.host}")
 	public String createAccountEndpoint;
 
 	@Bean
