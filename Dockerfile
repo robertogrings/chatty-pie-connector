@@ -3,9 +3,9 @@ MAINTAINER Partner Integrations team <partner.integrations@appdirect.com>
 
 COPY ./target/*.jar /opt/
 
-RUN find . -name "*javadoc.jar" | xargs rm
+RUN find /opt -name "*javadoc.jar" | xargs rm
 
-RUN find . -name "*sources.jar" | xargs rm
+RUN find /opt -name "*sources.jar" | xargs rm
 
 RUN mv $(ls ./opt/chatty-pie-connector*.jar) ./opt/chatty-pie-connector.jar
 
