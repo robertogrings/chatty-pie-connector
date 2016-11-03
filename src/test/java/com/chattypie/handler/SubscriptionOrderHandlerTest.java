@@ -52,10 +52,13 @@ public class SubscriptionOrderHandlerTest {
 		when(mockRestTemplate.postForObject(eq(accountCreationEndpoint), eq(expectedCreateAccountPayload), eq(Account.class)))
 				.thenReturn(new Account(expectedAccountIdentifier, 15));
 
-		when(mockRestTemplate.postForObject(eq(chatroomCreationEndpoint), eq(expectedChatroomCreationPayload), eq(Chatroom.class)))
-				.thenReturn(
-						new Chatroom("some-id", expectedChatroomName, expectedAccountIdentifier)
-				);
+		String expectedChatroomId = "some-id";
+		when(
+			mockRestTemplate.postForObject(eq(chatroomCreationEndpoint), eq(expectedChatroomCreationPayload), eq(Chatroom.class))
+		)
+		.thenReturn(
+			new Chatroom(expectedChatroomId, expectedChatroomName, expectedAccountIdentifier)
+		);
 
 		//When
 		APIResult apiResult = subscriptionOrderHandler.handle(testEvent);
@@ -65,7 +68,7 @@ public class SubscriptionOrderHandlerTest {
 				.as("The returned API result is successful")
 				.isTrue();
 		assertThat(apiResult.getAccountIdentifier())
-				.isEqualTo(expectedAccountIdentifier);
+				.isEqualTo(expectedChatroomId);
 	}
 
 	private SubscriptionOrder subscriptionOrderWithConfig(Map<String, String> configuration) {

@@ -1,7 +1,5 @@
 package com.chattypie;
 
-import static com.appdirect.sdk.appmarket.api.ErrorCode.CONFIGURATION_ERROR;
-
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -12,9 +10,9 @@ import com.appdirect.sdk.ConnectorSdkConfiguration;
 import com.appdirect.sdk.appmarket.AppmarketEventHandler;
 import com.appdirect.sdk.appmarket.DeveloperSpecificAppmarketCredentials;
 import com.appdirect.sdk.appmarket.DeveloperSpecificAppmarketCredentialsSupplier;
-import com.appdirect.sdk.appmarket.api.APIResult;
 import com.appdirect.sdk.appmarket.api.SubscriptionCancel;
 import com.appdirect.sdk.appmarket.api.SubscriptionOrder;
+import com.chattypie.handler.SubscriptionCancelHandler;
 import com.chattypie.handler.SubscriptionOrderHandler;
 
 @Configuration
@@ -22,7 +20,7 @@ import com.chattypie.handler.SubscriptionOrderHandler;
 public class RootConfiguration {
 
 	@Value("${chatty.pie.host}")
-	public String createAccountEndpoint;
+	public String chattyPieHost;
 
 	@Bean
 	public DeveloperSpecificAppmarketCredentialsSupplier credentialsSupplier() {
@@ -36,11 +34,11 @@ public class RootConfiguration {
 
 	@Bean
 	public AppmarketEventHandler<SubscriptionOrder> subscriptionOrderHandler() {
-		return new SubscriptionOrderHandler(restTemplate(), createAccountEndpoint);
+		return new SubscriptionOrderHandler(restTemplate(), chattyPieHost);
 	}
 
 	@Bean
 	public AppmarketEventHandler<SubscriptionCancel> subscriptionCancelHandler() {
-		return event -> APIResult.failure(CONFIGURATION_ERROR, "SUB_CANCEL is not supported yet.");
+		return new SubscriptionCancelHandler(restTemplate(), chattyPieHost);
 	}
 }

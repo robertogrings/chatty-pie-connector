@@ -42,7 +42,7 @@ public class SubscriptionOrderHandler implements AppmarketEventHandler<Subscript
 			false,
 			null,
 			format("Account created successfully: %s", accountCreated.toString()),
-			chatroom.getAccountId(),
+			chatroom.getId(),
 			null,
 			null
 		);
