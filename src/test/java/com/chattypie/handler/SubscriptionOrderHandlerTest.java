@@ -1,13 +1,12 @@
-package com.chattypie.processor;
+package com.chattypie.handler;
 
-import static com.appdirect.sdk.appmarket.api.EventType.SUBSCRIPTION_CANCEL;
-import static com.appdirect.sdk.appmarket.api.EventType.SUBSCRIPTION_ORDER;
 import static java.lang.String.format;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.when;
 
 import java.util.HashMap;
+import java.util.Map;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -17,15 +16,17 @@ import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.web.client.RestTemplate;
 
 import com.appdirect.sdk.appmarket.api.APIResult;
-import com.appdirect.sdk.appmarket.api.EventInfo;
-import com.appdirect.sdk.appmarket.api.EventPayload;
+import com.appdirect.sdk.appmarket.api.CompanyInfo;
+import com.appdirect.sdk.appmarket.api.OrderInfo;
+import com.appdirect.sdk.appmarket.api.SubscriptionOrder;
+import com.appdirect.sdk.appmarket.api.UserInfo;
 import com.chattypie.model.Account;
 import com.chattypie.model.Chatroom;
 
 @RunWith(MockitoJUnitRunner.class)
-public class SubscriptionOrderProcessorTest {
+public class SubscriptionOrderHandlerTest {
 
-	private SubscriptionOrderProcessor subscriptionOrderProcessor;
+	private SubscriptionOrderHandler subscriptionOrderHandler;
 
 	@Mock
 	private RestTemplate mockRestTemplate;
@@ -33,44 +34,15 @@ public class SubscriptionOrderProcessorTest {
 
 	@Before
 	public void setUp() throws Exception {
-		subscriptionOrderProcessor = new SubscriptionOrderProcessor(mockRestTemplate, MOCK_CHATTY_PIE_URL);
-	}
-
-	@Test
-	public void testSupports_whenCalledWithSubscriptionOrderEvent_thenReturnTrue() throws Exception {
-		//When
-		boolean result = subscriptionOrderProcessor.supports(SUBSCRIPTION_ORDER);
-
-		//Then
-		assertThat(result)
-			.as("The processor supports SUBSCRIPTION_ORDER events")
-			.isTrue();
-	}
-
-	@Test
-	public void testSupports_whenCalledWithNonSubscriptionOrderEvent_thenReturnFalse() throws Exception {
-		//When
-		boolean result = subscriptionOrderProcessor.supports(SUBSCRIPTION_CANCEL);
-
-		//Then
-		assertThat(result)
-			.as("The processor supports SUBSCRIPTION_CANCEL events")
-			.isFalse();
+		subscriptionOrderHandler = new SubscriptionOrderHandler(mockRestTemplate, MOCK_CHATTY_PIE_URL);
 	}
 
 	@Test
 	public void testProcess_whenAccountCreatedSuccessfullyOnChattyPie_thenReturnTheCreatedAccountIdentifier() throws Exception {
 		//Given
 		String expectedAccountIdentifier = "expectedAccountIdentifier";
-		HashMap<String, String> configuration = new HashMap<>();
 		String expectedChatroomName = "TestName";
-		configuration.put("chatroomName", expectedChatroomName);
-		EventInfo testEvent = EventInfo.builder()
-			.payload(
-				EventPayload.builder()
-					.configuration(configuration)
-				.build())
-			.build();
+		SubscriptionOrder testEvent = subscriptionOrderWithConfig(config("chatroomName", expectedChatroomName));
 
 		String accountCreationEndpoint = format("%s/accounts", MOCK_CHATTY_PIE_URL);
 		String chatroomCreationEndpoint = format("%s/accounts/%s/rooms", MOCK_CHATTY_PIE_URL, expectedAccountIdentifier);
@@ -78,22 +50,33 @@ public class SubscriptionOrderProcessorTest {
 		String expectedChatroomCreationPayload = format("{\"name\": \"%s\"}", expectedChatroomName);
 
 		when(mockRestTemplate.postForObject(eq(accountCreationEndpoint), eq(expectedCreateAccountPayload), eq(Account.class)))
-			.thenReturn(new Account(expectedAccountIdentifier, 15));
+				.thenReturn(new Account(expectedAccountIdentifier, 15));
 
 		when(mockRestTemplate.postForObject(eq(chatroomCreationEndpoint), eq(expectedChatroomCreationPayload), eq(Chatroom.class)))
-			.thenReturn(
-				new Chatroom(null, null, expectedAccountIdentifier)
-			);
+				.thenReturn(
+						new Chatroom("some-id", expectedChatroomName, expectedAccountIdentifier)
+				);
 
 		//When
-		APIResult apiResult = subscriptionOrderProcessor.process(testEvent, "");
+		APIResult apiResult = subscriptionOrderHandler.handle(testEvent);
 
 		//Then
 		assertThat(apiResult.isSuccess())
-			.as("The returned API result is successful")
-			.isTrue();
+				.as("The returned API result is successful")
+				.isTrue();
 		assertThat(apiResult.getAccountIdentifier())
-			.isEqualTo(expectedAccountIdentifier);
+				.isEqualTo(expectedAccountIdentifier);
 	}
 
+	private SubscriptionOrder subscriptionOrderWithConfig(Map<String, String> configuration) {
+		return new SubscriptionOrder(null, UserInfo.builder().build(), configuration, CompanyInfo.builder().build(), OrderInfo.builder().build());
+	}
+
+	private Map<String, String> config(String... keyValues) {
+		Map<String, String> config = new HashMap<>();
+		for (int i = 0; i < keyValues.length; i++) {
+			config.put(keyValues[i], keyValues[++i]);
+		}
+		return config;
+	}
 }
