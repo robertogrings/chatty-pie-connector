@@ -3,9 +3,11 @@ MAINTAINER Partner Integrations team <partner.integrations@appdirect.com>
 
 COPY ./target/*.jar /opt/
 
-RUN mv $(ls ./opt/chatty-pie-connector*.jar) ./opt/chatty-pie-connector.jar
+RUN find /opt -name "*javadoc.jar" | xargs rm -f
 
-RUN ls -la /opt
+RUN find /opt -name "*sources.jar" | xargs rm -f 
+
+RUN mv $(ls ./opt/chatty-pie-connector*.jar) ./opt/chatty-pie-connector.jar
 
 EXPOSE 8080
 
