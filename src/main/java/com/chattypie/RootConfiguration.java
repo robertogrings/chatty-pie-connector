@@ -24,7 +24,7 @@ public class RootConfiguration {
 
 	@Bean
 	public DeveloperSpecificAppmarketCredentialsSupplier credentialsSupplier() {
-		return () -> new DeveloperSpecificAppmarketCredentials("sample", "sample");
+		return () -> new DeveloperSpecificAppmarketCredentials("CPC-288", "xBzbtLgp1V7m");
 	}
 
 	@Bean
