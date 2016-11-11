@@ -2,31 +2,27 @@ package com.chattypie.handler;
 
 import static java.lang.String.format;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.web.client.RestClientException;
-import org.springframework.web.client.RestTemplate;
 
 import com.appdirect.sdk.appmarket.AppmarketEventHandler;
 import com.appdirect.sdk.appmarket.api.APIResult;
 import com.appdirect.sdk.appmarket.api.SubscriptionCancel;
+import com.chattypie.service.chattypie.chatroom.ChatroomService;
 
 @Slf4j
+@RequiredArgsConstructor
 public class SubscriptionCancelHandler implements AppmarketEventHandler<SubscriptionCancel> {
 
-	private final RestTemplate restTemplate;
-	private final String chattyPieHost;
-
-	public SubscriptionCancelHandler(RestTemplate restTemplate, String chattyPieHost) {
-		this.restTemplate = restTemplate;
-		this.chattyPieHost = chattyPieHost;
-	}
+	private final ChatroomService chatroomService;
 
 	@Override
 	public APIResult handle(SubscriptionCancel event) {
 		String idOfChatroomToRemove = event.getAccountIdentifier();
 		try {
-			restTemplate.delete(format("%s/rooms/%s", chattyPieHost, idOfChatroomToRemove));
+			chatroomService.removeChatroom(idOfChatroomToRemove);
 			return new APIResult(true, format("Account  %s cancelled successfully", idOfChatroomToRemove));
 		} catch (RestClientException e) {
 			String errorMessage = format("Account with accountId=%s could not be deleted", idOfChatroomToRemove);

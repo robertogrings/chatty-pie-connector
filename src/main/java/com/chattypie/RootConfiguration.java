@@ -1,12 +1,10 @@
 package com.chattypie;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.embedded.EmbeddedServletContainerFactory;
 import org.springframework.boot.context.embedded.tomcat.TomcatEmbeddedServletContainerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
-import org.springframework.web.client.RestTemplate;
 
 import ch.qos.logback.access.tomcat.LogbackValve;
 import com.appdirect.sdk.ConnectorSdkConfiguration;
@@ -17,13 +15,18 @@ import com.appdirect.sdk.appmarket.api.SubscriptionCancel;
 import com.appdirect.sdk.appmarket.api.SubscriptionOrder;
 import com.chattypie.handler.SubscriptionCancelHandler;
 import com.chattypie.handler.SubscriptionOrderHandler;
+import com.chattypie.service.chattypie.ChattyPieAccessConfiguration;
+import com.chattypie.service.appmarket.CompanyAccountService;
+import com.chattypie.service.appmarket.CompanyAccountServiceConfiguration;
+import com.chattypie.service.chattypie.chatroom.ChatroomService;
 
 @Configuration
-@Import(ConnectorSdkConfiguration.class)
+@Import({
+	ConnectorSdkConfiguration.class,
+	CompanyAccountServiceConfiguration.class,
+	ChattyPieAccessConfiguration.class
+})
 public class RootConfiguration {
-
-	@Value("${chatty.pie.host}")
-	public String chattyPieHost;
 
 	@Bean
 	public DeveloperSpecificAppmarketCredentialsSupplier credentialsSupplier() {
@@ -42,17 +45,12 @@ public class RootConfiguration {
 	}
 
 	@Bean
-	public RestTemplate restTemplate() {
-		return new RestTemplate();
+	public AppmarketEventHandler<SubscriptionOrder> subscriptionOrderHandler(CompanyAccountService companyAccountService, ChatroomService chatroomService) {
+		return new SubscriptionOrderHandler(companyAccountService, chatroomService);
 	}
 
 	@Bean
-	public AppmarketEventHandler<SubscriptionOrder> subscriptionOrderHandler() {
-		return new SubscriptionOrderHandler(restTemplate(), chattyPieHost);
-	}
-
-	@Bean
-	public AppmarketEventHandler<SubscriptionCancel> subscriptionCancelHandler() {
-		return new SubscriptionCancelHandler(restTemplate(), chattyPieHost);
+	public AppmarketEventHandler<SubscriptionCancel> subscriptionCancelHandler(ChatroomService chatroomService) {
+		return new SubscriptionCancelHandler(chatroomService);
 	}
 }

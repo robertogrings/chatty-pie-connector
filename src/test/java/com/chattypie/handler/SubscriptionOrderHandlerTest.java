@@ -1,78 +1,111 @@
 package com.chattypie.handler;
 
-import static java.lang.String.format;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-import org.springframework.web.client.RestTemplate;
 
 import com.appdirect.sdk.appmarket.api.APIResult;
 import com.appdirect.sdk.appmarket.api.CompanyInfo;
-import com.appdirect.sdk.appmarket.api.OrderInfo;
 import com.appdirect.sdk.appmarket.api.SubscriptionOrder;
-import com.appdirect.sdk.appmarket.api.UserInfo;
-import com.chattypie.model.Account;
-import com.chattypie.model.Chatroom;
+import com.chattypie.persistence.model.CompanyAccount;
+import com.chattypie.service.chattypie.chatroom.Chatroom;
+import com.chattypie.service.appmarket.CompanyAccountService;
+import com.chattypie.service.chattypie.chatroom.ChatroomService;
 
 @RunWith(MockitoJUnitRunner.class)
 public class SubscriptionOrderHandlerTest {
 
-	private SubscriptionOrderHandler subscriptionOrderHandler;
+	private SubscriptionOrderHandler testedSubscriptionOrderHandler;
 
 	@Mock
-	private RestTemplate mockRestTemplate;
-	private static final String MOCK_CHATTY_PIE_URL = "http://mock.url.org";
+	private ChatroomService mockChatroomService;
+
+	@Mock
+	private CompanyAccountService mockCompanyAccountService;
 
 	@Before
 	public void setUp() throws Exception {
-		subscriptionOrderHandler = new SubscriptionOrderHandler(mockRestTemplate, MOCK_CHATTY_PIE_URL);
+		testedSubscriptionOrderHandler = new SubscriptionOrderHandler(mockCompanyAccountService, mockChatroomService);
 	}
 
 	@Test
-	public void testProcess_whenAccountCreatedSuccessfullyOnChattyPie_thenReturnTheCreatedAccountIdentifier() throws Exception {
+	public void testProcess_whenCompanyDoesNotHaveAnAccount_thenCreateAccountAndAddAChatroom() throws Exception {
 		//Given
-		String expectedAccountIdentifier = "expectedAccountIdentifier";
-		String expectedChatroomName = "TestName";
-		SubscriptionOrder testEvent = subscriptionOrderWithConfig(config("chatroomName", expectedChatroomName));
+		String expectedNewChatroomName = "chatroomName";
+		String testCompanyUuid = "testUuid";
+		SubscriptionOrder testEvent = generateSubscriptionOrderEvent(expectedNewChatroomName, testCompanyUuid);
 
-		String accountCreationEndpoint = format("%s/accounts", MOCK_CHATTY_PIE_URL);
-		String chatroomCreationEndpoint = format("%s/accounts/%s/rooms", MOCK_CHATTY_PIE_URL, expectedAccountIdentifier);
-		String expectedCreateAccountPayload = "{\"max_allowed_rooms\": 100}";
-		String expectedChatroomCreationPayload = format("{\"name\": \"%s\"}", expectedChatroomName);
+		when(mockCompanyAccountService.findExistingCompanyAccountById(testCompanyUuid))
+			.thenReturn(Optional.empty());
 
-		when(mockRestTemplate.postForObject(eq(accountCreationEndpoint), eq(expectedCreateAccountPayload), eq(Account.class)))
-				.thenReturn(new Account(expectedAccountIdentifier, 15));
+		String expectedAccountId = "sampleId";
+		when(mockCompanyAccountService.createCompanyAccountFor(testCompanyUuid))
+			.thenReturn(new CompanyAccount(expectedAccountId, testCompanyUuid));
 
-		String expectedChatroomId = "some-id";
-		when(
-			mockRestTemplate.postForObject(eq(chatroomCreationEndpoint), eq(expectedChatroomCreationPayload), eq(Chatroom.class))
-		)
-		.thenReturn(
-			new Chatroom(expectedChatroomId, expectedChatroomName, expectedAccountIdentifier)
-		);
+		String newChatroomId = "chatroomId";
+		when(mockChatroomService.createChatroomForAccount(expectedAccountId, expectedNewChatroomName))
+			.thenReturn(new Chatroom(newChatroomId, expectedNewChatroomName, expectedAccountId));
 
 		//When
-		APIResult apiResult = subscriptionOrderHandler.handle(testEvent);
+		APIResult result = testedSubscriptionOrderHandler.handle(testEvent);
 
 		//Then
-		assertThat(apiResult.isSuccess())
-				.as("The returned API result is successful")
-				.isTrue();
-		assertThat(apiResult.getAccountIdentifier())
-				.isEqualTo(expectedChatroomId);
+		assertThat(result.isSuccess())
+			.as("The result is successful")
+			.isTrue();
+		verify(mockChatroomService)
+			.createChatroomForAccount(eq(expectedAccountId), eq(expectedNewChatroomName));
+		assertThat(result.getAccountIdentifier()).isEqualTo(newChatroomId);
 	}
 
-	private SubscriptionOrder subscriptionOrderWithConfig(Map<String, String> configuration) {
-		return new SubscriptionOrder(null, UserInfo.builder().build(), configuration, CompanyInfo.builder().build(), OrderInfo.builder().build());
+	@Test
+	public void testProcess_whenCompanyDoesHaveAnAccount_thenAddAChatroomToExistingAccount() throws Exception {
+		//Given
+		String expectedNewChatroomName = "chatroomName";
+		String testCompanyUuid = "testUuid";
+		SubscriptionOrder testEvent = generateSubscriptionOrderEvent(expectedNewChatroomName, testCompanyUuid);
+
+		String exisingAccountId = "existingAccountId";
+		when(mockCompanyAccountService.findExistingCompanyAccountById(testCompanyUuid))
+			.thenReturn(Optional.of(new CompanyAccount(exisingAccountId, testCompanyUuid)));
+
+		String newChatroomId = "chatroomId";
+		when(mockChatroomService.createChatroomForAccount(exisingAccountId, expectedNewChatroomName))
+			.thenReturn(new Chatroom(newChatroomId, expectedNewChatroomName, exisingAccountId));
+
+		//When
+		APIResult result = testedSubscriptionOrderHandler.handle(testEvent);
+
+		//Then
+		assertThat(result.isSuccess())
+			.as("The result is successful")
+			.isTrue();
+		verify(mockChatroomService)
+			.createChatroomForAccount(eq(exisingAccountId), eq(expectedNewChatroomName));
+		assertThat(result.getAccountIdentifier()).isEqualTo(newChatroomId);
+	}
+
+	private SubscriptionOrder generateSubscriptionOrderEvent(String expectedNewChatroomName, String testCompanyUuid) {
+		return new SubscriptionOrder(
+			null,
+			null,
+			config("chatroomName", expectedNewChatroomName),
+			CompanyInfo.builder()
+				.uuid(testCompanyUuid)
+				.build(),
+			null
+		);
 	}
 
 	private Map<String, String> config(String... keyValues) {

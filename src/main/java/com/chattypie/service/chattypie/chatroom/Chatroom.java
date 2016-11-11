@@ -1,4 +1,4 @@
-package com.chattypie.model;
+package com.chattypie.service.chattypie.chatroom;
 
 import lombok.Value;
 
