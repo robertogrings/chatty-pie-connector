@@ -1,14 +1,12 @@
-FROM docker.appdirectondemand.com/appdirect/java:1.0.7
+FROM openjdk:8u92-jdk-alpine
+
 MAINTAINER Partner Integrations team <partner.integrations@appdirect.com>
 
-COPY ./target/*.jar /opt/
+ENV JAR_NAME=chatty-pie-connector.jar
+ENV JAVA_OPTS="-Xms128M -Xmx128M -XX:MaxMetaspaceSize=64M"
 
-RUN find /opt -name "*javadoc.jar" | xargs rm -f
+COPY src/main/bash/entrypoint.sh /entrypoint.sh
+COPY target/$JAR_NAME /$JAR_NAME
+RUN chmod +x /entrypoint.sh
 
-RUN find /opt -name "*sources.jar" | xargs rm -f 
-
-RUN mv $(ls ./opt/chatty-pie-connector*.jar) ./opt/chatty-pie-connector.jar
-
-EXPOSE 8080
-
-ENTRYPOINT [ "java", "-server", "-Xms384m", "-Xmx384m", "-XX:MaxMetaspaceSize=128m", "-jar", "/opt/chatty-pie-connector.jar" ]
+ENTRYPOINT ["/entrypoint.sh"]

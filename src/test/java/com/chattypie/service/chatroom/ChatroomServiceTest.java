@@ -2,6 +2,8 @@ package com.chattypie.service.chatroom;
 
 import static java.lang.String.format;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import org.junit.Before;
@@ -50,4 +52,16 @@ public class ChatroomServiceTest {
 		assertThat(roomForAccount.getAccountId()).isEqualTo(testAccountId);
 	}
 
+	@Test
+	public void testRemoveChatroom() {
+		//Given
+		String idOfChatroomToRemove = "dummyId";
+
+		//When
+		testedChatroomService.removeChatroom(idOfChatroomToRemove);
+
+		//Then
+		verify(mockRestTemplate)
+			.delete(eq(format("%s/rooms/%s", mockChattyPieHost, idOfChatroomToRemove)));
+	}
 }

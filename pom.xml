@@ -91,7 +91,6 @@
 			<groupId>com.h2database</groupId>
 			<artifactId>h2</artifactId>
 			<version>1.4.193</version>
-			<scope>test</scope>
 		</dependency>
 
 		<!--Test-->
@@ -109,6 +108,7 @@
 	</dependencies>
 
 	<build>
+		<finalName>${artifactId}</finalName>
 		<plugins>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
@@ -244,6 +244,20 @@
 						<version>1.4.190</version>
 					</dependency>
 				</dependencies>
+			</plugin>
+			<plugin>
+				<groupId>com.spotify</groupId>
+				<artifactId>docker-maven-plugin</artifactId>
+				<version>0.4.13</version>
+				<configuration>
+					<dockerDirectory>${project.basedir}</dockerDirectory>
+					<imageName>docker.appdirectondemand.com/chatty-pie-connector/chatty-pie-connector</imageName>
+					<imageTags>
+						<imageTag>${project.version}</imageTag>
+					</imageTags>
+					<serverId>docker</serverId>
+					<registryUrl>https://docker.appdirectondemand.com/v2/</registryUrl>
+				</configuration>
 			</plugin>
 		</plugins>
 	</build>

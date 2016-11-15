@@ -12,12 +12,14 @@ import com.appdirect.sdk.appmarket.AppmarketEventHandler;
 import com.appdirect.sdk.appmarket.DeveloperSpecificAppmarketCredentials;
 import com.appdirect.sdk.appmarket.DeveloperSpecificAppmarketCredentialsSupplier;
 import com.appdirect.sdk.appmarket.api.SubscriptionCancel;
+import com.appdirect.sdk.appmarket.api.SubscriptionChange;
 import com.appdirect.sdk.appmarket.api.SubscriptionOrder;
 import com.chattypie.handler.SubscriptionCancelHandler;
+import com.chattypie.handler.SubscriptionChangeHandler;
 import com.chattypie.handler.SubscriptionOrderHandler;
-import com.chattypie.service.chattypie.ChattyPieAccessConfiguration;
 import com.chattypie.service.appmarket.CompanyAccountService;
 import com.chattypie.service.appmarket.CompanyAccountServiceConfiguration;
+import com.chattypie.service.chattypie.ChattyPieAccessConfiguration;
 import com.chattypie.service.chattypie.chatroom.ChatroomService;
 
 @Configuration
@@ -52,5 +54,10 @@ public class RootConfiguration {
 	@Bean
 	public AppmarketEventHandler<SubscriptionCancel> subscriptionCancelHandler(ChatroomService chatroomService) {
 		return new SubscriptionCancelHandler(chatroomService);
+	}
+
+	@Bean
+	public AppmarketEventHandler<SubscriptionChange> subscriptionChangeHandler() {
+		return new SubscriptionChangeHandler();
 	}
 }
