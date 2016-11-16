@@ -9,7 +9,7 @@ import org.springframework.context.annotation.Import;
 import ch.qos.logback.access.tomcat.LogbackValve;
 import com.appdirect.sdk.ConnectorSdkConfiguration;
 import com.appdirect.sdk.appmarket.AppmarketEventHandler;
-import com.appdirect.sdk.appmarket.DeveloperSpecificAppmarketCredentials;
+import com.appdirect.sdk.appmarket.Credentials;
 import com.appdirect.sdk.appmarket.DeveloperSpecificAppmarketCredentialsSupplier;
 import com.appdirect.sdk.appmarket.api.SubscriptionCancel;
 import com.appdirect.sdk.appmarket.api.SubscriptionChange;
@@ -24,15 +24,15 @@ import com.chattypie.service.chattypie.chatroom.ChatroomService;
 
 @Configuration
 @Import({
-	ConnectorSdkConfiguration.class,
-	CompanyAccountServiceConfiguration.class,
-	ChattyPieAccessConfiguration.class
+		ConnectorSdkConfiguration.class,
+		CompanyAccountServiceConfiguration.class,
+		ChattyPieAccessConfiguration.class
 })
 public class RootConfiguration {
 
 	@Bean
 	public DeveloperSpecificAppmarketCredentialsSupplier credentialsSupplier() {
-		return () -> new DeveloperSpecificAppmarketCredentials("CPC-288", "xBzbtLgp1V7m");
+		return (consumerKey) -> new Credentials(consumerKey, "xBzbtLgp1V7m");
 	}
 
 	@Bean

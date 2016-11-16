@@ -34,7 +34,7 @@ public class SubscriptionCancelHandlerTest {
 	public void handleSubscriptionCancel_shouldDeleteChatroom() throws Exception {
 		//Given
 		String testAppmarketAccountId = "test-id-value";
-		SubscriptionCancel testCancelEvent = new SubscriptionCancel(testAppmarketAccountId);
+		SubscriptionCancel testCancelEvent = new SubscriptionCancel("some-key", testAppmarketAccountId);
 
 		//When
 		APIResult eventResponse = testedEventHandler.handle(testCancelEvent);
@@ -52,7 +52,7 @@ public class SubscriptionCancelHandlerTest {
 	public void handleSubscriptionCancel_whenDeleteFails_shouldReturnAnInformativeMessage() throws Exception {
 		//Given
 		String testAppmarketAccountId = "test-id-value";
-		SubscriptionCancel testCancelEvent = new SubscriptionCancel(testAppmarketAccountId);
+		SubscriptionCancel testCancelEvent = new SubscriptionCancel("some-key", testAppmarketAccountId);
 		doThrow(RestClientException.class)
 			.when(mockChatroomService).removeChatroom(anyString());
 
