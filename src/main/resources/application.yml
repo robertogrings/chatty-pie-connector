@@ -1,11 +1,6 @@
 chatty.pie.host: https://operating-attic-146121.appspot.com
 signature.validation.use.https: true
 spring.datasource:
-    url: jdbc:h2:mem:dataSource
+    url: jdbc:mysql://localhost/chatty_pie_connector?createDatabaseIfNotExist=true
     username: root
     password: password
-    driver-class-name: org.h2.Driver
-    testOnBorrow: true
-    validationQuery: SELECT 1
-    max-active: 20
-    max-idle: 20

@@ -2,6 +2,11 @@
 
 A minimal example of a connector using the service-integration SDK
 
+## Requirements
+* Java 8
+* Docker
+* Mysql running on `localhost:3306` with `root/password`
+
 ## Running the application
 ### In the IDE
 * run `ChattyPieConnectorApplication`
