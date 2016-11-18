@@ -14,14 +14,14 @@ public class CompanyAccountDao {
 
 	private final SQLQueryFactory queryFactory;
 
-	public void insert(CompanyAccount accountToPersist) {
+	void insert(CompanyAccount accountToPersist) {
 		queryFactory
 			.insert(companyAccount)
 			.populate(accountToPersist)
 			.executeWithKey(CompanyAccount.class);
 	}
 
-	public Optional<CompanyAccount> readById(String requestedCompanyId) {
+	Optional<CompanyAccount> readById(String requestedCompanyId) {
 		return Optional.ofNullable(
 			queryFactory
 			.selectFrom(companyAccount)

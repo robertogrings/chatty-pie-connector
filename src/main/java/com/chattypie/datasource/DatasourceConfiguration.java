@@ -1,5 +1,7 @@
 package com.chattypie.datasource;
 
+import java.io.IOException;
+
 import javax.sql.DataSource;
 
 import org.springframework.context.annotation.Bean;
@@ -13,6 +15,11 @@ import com.querydsl.sql.SQLTemplatesRegistry;
 
 @Configuration
 public class DatasourceConfiguration {
+
+	@Bean
+	public JdbcTemplate jdbcTemplate(DataSource dataSource) throws IOException, InterruptedException {
+		return new JdbcTemplate(dataSource);
+	}
 
 	@Bean
 	public SQLQueryFactory nonTransactionalQueryFactory(JdbcTemplate jdbcTemplate, DataSource dataSource) {

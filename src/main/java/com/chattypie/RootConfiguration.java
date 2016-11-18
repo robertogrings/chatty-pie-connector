@@ -1,5 +1,6 @@
 package com.chattypie;
 
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.context.embedded.EmbeddedServletContainerFactory;
 import org.springframework.boot.context.embedded.tomcat.TomcatEmbeddedServletContainerFactory;
 import org.springframework.context.annotation.Bean;
@@ -28,6 +29,7 @@ import com.chattypie.service.chattypie.chatroom.ChatroomService;
 		CompanyAccountServiceConfiguration.class,
 		ChattyPieAccessConfiguration.class
 })
+@EnableAutoConfiguration
 public class RootConfiguration {
 
 	@Bean
