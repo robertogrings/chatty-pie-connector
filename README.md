@@ -28,7 +28,7 @@ Check the developer documentation available [here](https://appdirect.jira.com/wi
 
 ### Jenkins Job
 You can deploy the application to Kubernetes by triggering the following
-Jenkins job: `http://jenkins.appdirect.com:8080/view/DSL/job/chatty-pie-connector-kubernetes-deploy-dsl/build?delay=0sec`
+Jenkins job: `https://pi.ci.appdirect.tools/job/chatty-pie-connector-kubernetes-deploy-dsl/build?delay=0sec`
 
 The `version` field corresponds to the version of the Docker image to deploy,
 which in turn should match the project's version specified in the 
