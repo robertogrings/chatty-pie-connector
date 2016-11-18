@@ -23,8 +23,6 @@
 		<model.source.db.url>jdbc:h2:${project.build.directory}/h2;database_to_upper=false</model.source.db.url>
 		<!--Points to the Flyway target db-->
 		<migration.target.db.url>${model.source.db.url}</migration.target.db.url>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<java.version>1.8</java.version>
 		<query.dsl.version>4.1.4</query.dsl.version>
 	</properties>
