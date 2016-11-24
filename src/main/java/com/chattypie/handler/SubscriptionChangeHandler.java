@@ -1,5 +1,7 @@
 package com.chattypie.handler;
 
+import static com.appdirect.sdk.appmarket.api.APIResult.success;
+
 import com.appdirect.sdk.appmarket.AppmarketEventHandler;
 import com.appdirect.sdk.appmarket.api.APIResult;
 import com.appdirect.sdk.appmarket.api.SubscriptionChange;
@@ -17,6 +19,6 @@ public class SubscriptionChangeHandler implements AppmarketEventHandler<Subscrip
 		//	event.getOrder().getItems() would return the order items. This would give information about seat changes:
 		//	For example, if the order contains an item with 'quantity' = 5 and pricing unit USER, that would indicate
 		//	a change of seats in the application. This is the "seat assign/unassign" use case
-		return new APIResult(true, "Change handled");
+		return success("Change handled");
 	}
 }

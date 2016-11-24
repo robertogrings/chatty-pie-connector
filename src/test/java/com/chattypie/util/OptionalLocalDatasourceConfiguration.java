@@ -29,11 +29,4 @@ public class OptionalLocalDatasourceConfiguration {
 	public DataSource testDatasource(LocalDatasourceFactory datasourceFactory) {
 		return datasourceFactory.getDatasource();
 	}
-
-	@PreDestroy
-	public void removeLocalDbInstance() throws IOException {
-		//NB! : Very important to have the removeLocalDbInstance method here: when we are finished using a container,
-		//		we should remove it to avoid resource leaks
-		datasourceFactory().shutdown();
-	}
 }

@@ -1,5 +1,6 @@
 package com.chattypie.handler;
 
+import static com.appdirect.sdk.appmarket.api.AccountStatus.ACTIVE;
 import static org.assertj.core.api.Java6Assertions.assertThat;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
@@ -14,26 +15,29 @@ import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.web.client.RestClientException;
 
 import com.appdirect.sdk.appmarket.api.APIResult;
-import com.appdirect.sdk.appmarket.api.SubscriptionCancel;
+import com.appdirect.sdk.appmarket.api.AccountInfo;
+import com.appdirect.sdk.appmarket.api.SubscriptionDeactivated;
 import com.chattypie.service.chattypie.chatroom.ChatroomService;
 
 @RunWith(MockitoJUnitRunner.class)
-public class SubscriptionCancelHandlerTest {
+public class SubscriptionDeactivatedHandlerTest {
 
 	@Mock
 	private ChatroomService mockChatroomService;
-	private SubscriptionCancelHandler testedEventHandler;
+	private SubscriptionDeactivatedHandler testedEventHandler;
 
 	@Before
 	public void setUp() throws Exception {
-		testedEventHandler = new SubscriptionCancelHandler(mockChatroomService);
+		testedEventHandler = new SubscriptionDeactivatedHandler(mockChatroomService);
 	}
 
 	@Test
-	public void handleSubscriptionCancel_shouldSuspendChatroom() throws Exception {
+	public void handleSubscriptionDeactivated_shouldSuspendChatroom() throws Exception {
 		//Given
 		String testAppmarketAccountId = "test-id-value";
-		SubscriptionCancel testCancelEvent = new SubscriptionCancel("some-key", testAppmarketAccountId);
+		SubscriptionDeactivated testCancelEvent = new SubscriptionDeactivated(
+			new AccountInfo(testAppmarketAccountId, ACTIVE)
+		);
 
 		//When
 		APIResult eventResponse = testedEventHandler.handle(testCancelEvent);

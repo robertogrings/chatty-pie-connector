@@ -105,7 +105,9 @@ public class SubscriptionOrderHandlerTest {
 				CompanyInfo.builder()
 						.uuid(testCompanyUuid)
 						.build(),
-				null
+				null,
+			null, 
+			null
 		);
 	}
 

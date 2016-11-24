@@ -8,6 +8,8 @@ import javax.sql.DataSource;
 
 import lombok.extern.slf4j.Slf4j;
 
+import org.springframework.beans.factory.DisposableBean;
+
 import com.mysql.jdbc.jdbc2.optional.MysqlDataSource;
 import com.xebialabs.overcast.host.CloudHost;
 import com.xebialabs.overcast.host.CloudHostFactory;
@@ -22,11 +24,10 @@ import com.xebialabs.overcast.host.DockerHost;
  * * Failing to call shutdown after the application is finished would result in the database container not
  * being stopped/removed, which is a serious resource leak.
  * <p>
- * If you are instantiating this within Spring, it might be a good idea to call the {@link #shutdown()}
- * method from one of the shutdown hooks of your application context
+ * NB: It is important to implement {@link DisposableBean} here in order to properly clean up the test db container
  */
 @Slf4j
-public class LocalDatasourceFactory {
+public class LocalDatasourceFactory implements DisposableBean {
 	private static final int MYSQL_DATABASE_PORT = 3306;
 	private final CloudHost mysqlHost;
 
@@ -60,7 +61,10 @@ public class LocalDatasourceFactory {
 		return mysqlDataSource;
 	}
 
-	public void shutdown() {
+	@Override
+	public void destroy() throws Exception {
+		//NB! : Very important to have the removeLocalDbInstance method here: when we are finished using a container,
+		//		we should remove it to avoid resource leaks
 		mysqlHost.teardown();
 	}
 }

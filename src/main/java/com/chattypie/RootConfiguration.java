@@ -14,10 +14,18 @@ import com.appdirect.sdk.appmarket.Credentials;
 import com.appdirect.sdk.appmarket.DeveloperSpecificAppmarketCredentialsSupplier;
 import com.appdirect.sdk.appmarket.api.SubscriptionCancel;
 import com.appdirect.sdk.appmarket.api.SubscriptionChange;
+import com.appdirect.sdk.appmarket.api.SubscriptionClosed;
+import com.appdirect.sdk.appmarket.api.SubscriptionDeactivated;
 import com.appdirect.sdk.appmarket.api.SubscriptionOrder;
+import com.appdirect.sdk.appmarket.api.SubscriptionReactivated;
+import com.appdirect.sdk.appmarket.api.SubscriptionUpcomingInvoice;
 import com.chattypie.handler.SubscriptionCancelHandler;
 import com.chattypie.handler.SubscriptionChangeHandler;
+import com.chattypie.handler.SubscriptionClosedHandler;
+import com.chattypie.handler.SubscriptionDeactivatedHandler;
 import com.chattypie.handler.SubscriptionOrderHandler;
+import com.chattypie.handler.SubscriptionReactivatedHandler;
+import com.chattypie.handler.SubscriptionUpcomingInvoiceHandler;
 import com.chattypie.service.appmarket.CompanyAccountService;
 import com.chattypie.service.appmarket.CompanyAccountServiceConfiguration;
 import com.chattypie.service.chattypie.ChattyPieAccessConfiguration;
@@ -25,16 +33,16 @@ import com.chattypie.service.chattypie.chatroom.ChatroomService;
 
 @Configuration
 @Import({
-		ConnectorSdkConfiguration.class,
-		CompanyAccountServiceConfiguration.class,
-		ChattyPieAccessConfiguration.class
+	ConnectorSdkConfiguration.class,
+	CompanyAccountServiceConfiguration.class,
+	ChattyPieAccessConfiguration.class
 })
 @EnableAutoConfiguration
 public class RootConfiguration {
 
 	@Bean
 	public DeveloperSpecificAppmarketCredentialsSupplier credentialsSupplier() {
-		return (consumerKey) -> new Credentials(consumerKey, "xBzbtLgp1V7m");
+		return consumerKey -> new Credentials(consumerKey, "xBzbtLgp1V7m");
 	}
 
 	@Bean
@@ -61,5 +69,30 @@ public class RootConfiguration {
 	@Bean
 	public AppmarketEventHandler<SubscriptionChange> subscriptionChangeHandler() {
 		return new SubscriptionChangeHandler();
+	}
+
+	@Bean
+	public AppmarketEventHandler<SubscriptionDeactivated> subscriptionDeactivatedAppmarketEventHandler(ChatroomService chatroomService) {
+		return new SubscriptionDeactivatedHandler(chatroomService);
+	}
+
+	@Bean
+	public AppmarketEventHandler<SubscriptionReactivated> subscriptionReactivatedAppmarketEventHandler(ChatroomService chatroomService) {
+		return new SubscriptionReactivatedHandler(chatroomService);
+	}
+
+	@Bean
+	public AppmarketEventHandler<SubscriptionClosed> subscriptionClosedAppmarketEventHandler(ChatroomService chatroomService) {
+		return new SubscriptionClosedHandler(chatroomService);
+	}
+
+	@Bean
+	public AppmarketEventHandler<SubscriptionUpcomingInvoice> subscriptionUpcomingInvoiceAppmarketEventHandler() {
+		return new SubscriptionUpcomingInvoiceHandler();
+	}
+
+	@Bean
+	public ErrorHandler errorHandler() {
+		return new ErrorHandler();
 	}
 }

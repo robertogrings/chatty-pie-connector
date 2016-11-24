@@ -30,6 +30,36 @@ public class ChatroomServiceTest {
 	}
 
 	@Test
+	public void testSuspendChatroom_whenCalled_theCorrespondingRestCallIsMadeToChattyPie() throws Exception {
+		//Given
+		String testChatromId = "testChatromId";
+
+		//When
+		testedChatroomService.suspendChatroom(testChatromId);
+
+		//Then
+		verify(mockRestTemplate).put(
+			eq(format("%s/rooms/%s", mockChattyPieHost, testChatromId)),
+			eq("{\"status\":\"suspended\"}")
+		);
+	}
+
+	@Test
+	public void testReactivateChatroom_whenCalled_theCorrespondingRestCallIsMadeToChattyPie() throws Exception {
+		//Given
+		String testChatromId = "testChatromId";
+
+		//When
+		testedChatroomService.reactivate(testChatromId);
+
+		//Then
+		verify(mockRestTemplate).put(
+			eq(format("%s/rooms/%s", mockChattyPieHost, testChatromId)),
+			eq("{\"status\":\"active\"}")
+		);
+	}
+
+	@Test
 	public void createRoomForAccount() throws Exception {
 		//Given
 		String testChatroomName = "testName";
