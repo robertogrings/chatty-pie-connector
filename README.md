@@ -50,3 +50,7 @@ Once deployed, the application can be accessed at this URL: https://dev-cpc.deva
 
 To verify that the server is running correctly, check if a GET request at https://dev-cpc.devappdirect.me/health
 returns 200(OK)
+
++## Regular dependencies version update
+ +* `mvn versions:update-parent`
+ +* `mvn versions:use-latest-releases`
