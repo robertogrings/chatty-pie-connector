@@ -1,5 +1,4 @@
 chatty.pie.host: https://operating-attic-146121.appspot.com
-signature.validation.use.https: true
 spring.datasource:
     url: jdbc:mysql://localhost/chatty_pie_connector?createDatabaseIfNotExist=true
     username: root
