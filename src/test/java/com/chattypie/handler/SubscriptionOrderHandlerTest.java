@@ -15,9 +15,9 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import com.appdirect.sdk.appmarket.api.APIResult;
-import com.appdirect.sdk.appmarket.api.CompanyInfo;
-import com.appdirect.sdk.appmarket.api.SubscriptionOrder;
+import com.appdirect.sdk.appmarket.events.APIResult;
+import com.appdirect.sdk.appmarket.events.CompanyInfo;
+import com.appdirect.sdk.appmarket.events.SubscriptionOrder;
 import com.chattypie.persistence.model.CompanyAccount;
 import com.chattypie.service.appmarket.CompanyAccountService;
 import com.chattypie.service.chattypie.chatroom.Chatroom;

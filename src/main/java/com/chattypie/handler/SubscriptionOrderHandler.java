@@ -8,8 +8,8 @@ import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 
 import com.appdirect.sdk.appmarket.AppmarketEventHandler;
-import com.appdirect.sdk.appmarket.api.APIResult;
-import com.appdirect.sdk.appmarket.api.SubscriptionOrder;
+import com.appdirect.sdk.appmarket.events.APIResult;
+import com.appdirect.sdk.appmarket.events.SubscriptionOrder;
 import com.chattypie.persistence.model.CompanyAccount;
 import com.chattypie.service.appmarket.CompanyAccountService;
 import com.chattypie.service.chattypie.chatroom.Chatroom;

@@ -4,8 +4,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import org.junit.Test;
 
-import com.appdirect.sdk.appmarket.api.APIResult;
-import com.appdirect.sdk.appmarket.api.SubscriptionChange;
+import com.appdirect.sdk.appmarket.events.APIResult;
+import com.appdirect.sdk.appmarket.events.SubscriptionChange;
 
 public class SubscriptionChangeHandlerTest {
 	private SubscriptionChangeHandler testedHandler = new SubscriptionChangeHandler();

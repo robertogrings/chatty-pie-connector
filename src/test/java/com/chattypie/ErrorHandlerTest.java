@@ -4,7 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import org.junit.Test;
 
-import com.appdirect.sdk.appmarket.api.APIResult;
+import com.appdirect.sdk.appmarket.events.APIResult;
 
 public class ErrorHandlerTest {
 

@@ -1,10 +1,10 @@
 package com.chattypie.handler;
 
-import static com.appdirect.sdk.appmarket.api.APIResult.success;
+import static com.appdirect.sdk.appmarket.events.APIResult.success;
 
 import com.appdirect.sdk.appmarket.AppmarketEventHandler;
-import com.appdirect.sdk.appmarket.api.APIResult;
-import com.appdirect.sdk.appmarket.api.SubscriptionChange;
+import com.appdirect.sdk.appmarket.events.APIResult;
+import com.appdirect.sdk.appmarket.events.SubscriptionChange;
 
 public class SubscriptionChangeHandler implements AppmarketEventHandler<SubscriptionChange> {
 	@Override

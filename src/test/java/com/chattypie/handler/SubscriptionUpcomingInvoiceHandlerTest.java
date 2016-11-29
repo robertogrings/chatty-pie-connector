@@ -1,13 +1,13 @@
 package com.chattypie.handler;
 
-import static com.appdirect.sdk.appmarket.api.AccountStatus.ACTIVE;
+import static com.appdirect.sdk.appmarket.events.AccountStatus.ACTIVE;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import org.junit.Test;
 
-import com.appdirect.sdk.appmarket.api.APIResult;
-import com.appdirect.sdk.appmarket.api.AccountInfo;
-import com.appdirect.sdk.appmarket.api.SubscriptionUpcomingInvoice;
+import com.appdirect.sdk.appmarket.events.APIResult;
+import com.appdirect.sdk.appmarket.events.AccountInfo;
+import com.appdirect.sdk.appmarket.events.SubscriptionUpcomingInvoice;
 
 public class SubscriptionUpcomingInvoiceHandlerTest {
 	private SubscriptionUpcomingInvoiceHandler testtedHandler = new SubscriptionUpcomingInvoiceHandler();

@@ -1,13 +1,13 @@
 package com.chattypie.handler;
 
-import static com.appdirect.sdk.appmarket.api.APIResult.success;
+import static com.appdirect.sdk.appmarket.events.APIResult.success;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import com.appdirect.sdk.appmarket.AppmarketEventHandler;
-import com.appdirect.sdk.appmarket.api.APIResult;
-import com.appdirect.sdk.appmarket.api.SubscriptionReactivated;
+import com.appdirect.sdk.appmarket.events.APIResult;
+import com.appdirect.sdk.appmarket.events.SubscriptionReactivated;
 import com.chattypie.service.chattypie.chatroom.ChatroomService;
 
 @Slf4j

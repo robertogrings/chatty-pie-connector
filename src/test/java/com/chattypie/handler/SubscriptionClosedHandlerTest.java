@@ -1,6 +1,6 @@
 package com.chattypie.handler;
 
-import static com.appdirect.sdk.appmarket.api.AccountStatus.CANCELLED;
+import static com.appdirect.sdk.appmarket.events.AccountStatus.CANCELLED;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
 
@@ -10,9 +10,9 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import com.appdirect.sdk.appmarket.api.APIResult;
-import com.appdirect.sdk.appmarket.api.AccountInfo;
-import com.appdirect.sdk.appmarket.api.SubscriptionClosed;
+import com.appdirect.sdk.appmarket.events.APIResult;
+import com.appdirect.sdk.appmarket.events.AccountInfo;
+import com.appdirect.sdk.appmarket.events.SubscriptionClosed;
 import com.chattypie.service.chattypie.chatroom.ChatroomService;
 
 @RunWith(MockitoJUnitRunner.class)
