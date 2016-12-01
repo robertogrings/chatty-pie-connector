@@ -20,9 +20,9 @@
 
 	<properties>
 		<!--Points to the db used to generate the model source code-->
-		<model.source.db.url>jdbc:h2:${project.build.directory}/h2;database_to_upper=false</model.source.db.url>
-		<!--Points to the Flyway target db-->
-		<migration.target.db.url>${model.source.db.url}</migration.target.db.url>
+		<model.source.db.url>jdbc:mysql://localhost/chatty_pie_connector?createDatabaseIfNotExist=true</model.source.db.url>
+		<model.source.db.username>root</model.source.db.username>
+		<model.source.db.password>password</model.source.db.password>
 		<java.version>1.8</java.version>
 		<query.dsl.version>4.1.4</query.dsl.version>
 	</properties>
@@ -54,7 +54,7 @@
 		<dependency>
 			<groupId>com.appdirect</groupId>
 			<artifactId>service-integration-sdk</artifactId>
-			<version>1.4-SNAPSHOT</version>
+			<version>1.5-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>ch.qos.logback</groupId>
@@ -116,6 +116,18 @@
 		</dependency>
 	</dependencies>
 
+	<profiles>
+		<profile>
+			<id>skipDbCodeGeneration</id>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
+			<properties>
+				<skipDbCodeGeneration>true</skipDbCodeGeneration>
+			</properties>
+		</profile>
+	</profiles>
+	
 	<build>
 		<finalName>${project.artifactId}</finalName>
 		<plugins>
@@ -179,51 +191,6 @@
 				<artifactId>git-commit-id-plugin</artifactId>
 			</plugin>
 			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>build-helper-maven-plugin</artifactId>
-				<version>1.12</version>
-				<executions>
-					<execution>
-						<id>test</id>
-						<phase>generate-sources</phase>
-						<goals>
-							<goal>add-source</goal>
-						</goals>
-						<configuration>
-							<sources>
-								<source>${basedir}/target/generated-sources</source>
-							</sources>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<groupId>org.flywaydb</groupId>
-				<artifactId>flyway-maven-plugin</artifactId>
-				<version>4.0.3</version>
-				<executions>
-					<execution>
-						<goals>
-							<goal>migrate</goal>
-						</goals>
-						<phase>generate-sources</phase>
-					</execution>
-				</executions>
-				<configuration>
-					<url>${migration.target.db.url}</url>
-					<locations>
-						<location>filesystem:${project.basedir}/src/main/resources/db/migration</location>
-					</locations>
-				</configuration>
-				<dependencies>
-					<dependency>
-						<groupId>com.h2database</groupId>
-						<artifactId>h2</artifactId>
-						<version>1.4.190</version>
-					</dependency>
-				</dependencies>
-			</plugin>
-			<plugin>
 				<groupId>com.querydsl</groupId>
 				<artifactId>querydsl-maven-plugin</artifactId>
 				<version>${query.dsl.version}</version>
@@ -236,11 +203,14 @@
 					</execution>
 				</executions>
 				<configuration>
+					<skip>${skipDbCodeGeneration}</skip>
 					<beanAddFullConstructor>true</beanAddFullConstructor>
-					<jdbcDriver>org.h2.Driver</jdbcDriver>
+					<jdbcDriver>com.mysql.jdbc.Driver</jdbcDriver>
 					<jdbcUrl>${model.source.db.url}</jdbcUrl>
+					<jdbcUser>${model.source.db.username}</jdbcUser>
+					<jdbcPassword>${model.source.db.password}</jdbcPassword>
 					<packageName>com.chattypie.persistence.model</packageName>
-					<targetFolder>target/generated-sources/java</targetFolder>
+					<targetFolder>src/main/java</targetFolder>
 					<namePrefix>Q</namePrefix>
 					<sourceFolder/>
 					<exportBeans>true</exportBeans>
@@ -248,9 +218,9 @@
 				</configuration>
 				<dependencies>
 					<dependency>
-						<groupId>com.h2database</groupId>
-						<artifactId>h2</artifactId>
-						<version>1.4.190</version>
+						<groupId>mysql</groupId>
+						<artifactId>mysql-connector-java</artifactId>
+						<version>5.1.40</version>
 					</dependency>
 				</dependencies>
 			</plugin>

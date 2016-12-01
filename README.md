@@ -7,6 +7,17 @@ A minimal example of a connector using the service-integration SDK
 * Docker
 * Mysql running on `localhost:3306` with `root/password`
 
+## Generating the DB classes
+* Ensure you have a local instance of MySql running (localhost:3306)
+* Ensure that your local db contains the latest version of the schema 
+	* You just have to run the application once while pointing to your local db and the schema would be 
+		updated automatically
+* run `./mvnw clean install -DskipDbCodeGeneration=false -Dmodel.source.db.username=[your-local-db-user] -Dmodel.source.db.password=[your-local-db-password] -Dmodel.source.db.url=[connection-string-for-your-db-here]`.
+	* All flags EXCEPT `-DskipDbCodeGeneration=false` are optional: if your local MySql instance is running on localhost 3306 and has
+	  a root user called `root` with a password `password`, you can ommit them them;
+	* If you run `./mvnw clean install` without any extra flags, this will build the project without regenerating the db sources
+* The new sources will be generated directly in `src/main/java/com/chattypie/persistence/model`
+
 ## Running the application
 ### In the IDE
 * run `ChattyPieConnectorApplication`
