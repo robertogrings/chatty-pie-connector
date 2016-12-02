@@ -121,12 +121,6 @@ public class RootConfiguration {
 	}
 
 	@Bean
-	public HtmlEmailNotificationService notificationService(JavaMailSender javaMailSender) {
-		String fromAddress = "notifications@appdirect.com";
-		return new HtmlEmailNotificationService(fromAddress, javaMailSender);
-	}
-
-	@Bean
 	public EmailContentGenerator emailContentGenerator() {
 		return new EmailContentGenerator();
 	}

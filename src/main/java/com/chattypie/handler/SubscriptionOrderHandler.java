@@ -29,9 +29,6 @@ public class SubscriptionOrderHandler implements AppmarketEventHandler<Subscript
 	public APIResult handle(SubscriptionOrder event) {
 		String idOfCompanyPlacingTheOrder = event.getCompanyInfo().getUuid();
 		Optional<CompanyAccount> existingCompanyAccount = companyAccountService.findExistingCompanyAccountById(idOfCompanyPlacingTheOrder);
-		if (!existingCompanyAccount.isPresent()) {
-			greetingService.sendNewCompanyGreeting(event.getCompanyInfo());
-		}
 		CompanyAccount companyAccount = existingCompanyAccount.orElseGet(
 			() -> companyAccountService.createCompanyAccountFor(idOfCompanyPlacingTheOrder)
 		);
@@ -39,14 +36,12 @@ public class SubscriptionOrderHandler implements AppmarketEventHandler<Subscript
 		String chatroomName = event.getConfiguration().getOrDefault(CHATROOM_FIELD_NAME, UUID.randomUUID().toString());
 		Chatroom chatroom = chatroomService.createChatroomForAccount(companyAccount.getAccountId(), chatroomName);
 
-		return new APIResult(
-			true,
-			false,
-			null,
-			format("Successfully placed order for account: %s", companyAccount),
-			chatroom.getId(),
-			null,
-			null
-		);
+		if (!existingCompanyAccount.isPresent()) {
+			greetingService.sendNewCompanyGreeting(event.getCompanyInfo());
+		}
+
+		APIResult success = APIResult.success(format("Successfully placed order for account: %s", companyAccount));
+		success.setAccountIdentifier(chatroom.getId());
+		return success;
 	}
 }
