@@ -1,0 +1,10 @@
+signature.validation.use.https: true
+spring.mail:
+    host: smtp.sendgrid.net
+    port: 465
+    username: web.master@appdirect.com
+    password: SKjl8dD0rqpu73f0lyAH
+    properties:
+      mail.smtp.ssl.enable: true
+      mail.smtp.timeout: 5000
+      mail.smtp.connectiontimeout: 5000

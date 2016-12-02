@@ -14,18 +14,24 @@ import com.chattypie.persistence.model.CompanyAccount;
 import com.chattypie.service.appmarket.CompanyAccountService;
 import com.chattypie.service.chattypie.chatroom.Chatroom;
 import com.chattypie.service.chattypie.chatroom.ChatroomService;
+import com.chattypie.service.chattypie.greeting.GreetingService;
 
 @RequiredArgsConstructor
 public class SubscriptionOrderHandler implements AppmarketEventHandler<SubscriptionOrder> {
 
+	private static final String CHATROOM_FIELD_NAME = "chatroomName";
+
 	private final CompanyAccountService companyAccountService;
 	private final ChatroomService chatroomService;
-	private static final String CHATROOM_FIELD_NAME = "chatroomName";
+	private final GreetingService greetingService;
 
 	@Override
 	public APIResult handle(SubscriptionOrder event) {
 		String idOfCompanyPlacingTheOrder = event.getCompanyInfo().getUuid();
 		Optional<CompanyAccount> existingCompanyAccount = companyAccountService.findExistingCompanyAccountById(idOfCompanyPlacingTheOrder);
+		if (!existingCompanyAccount.isPresent()) {
+			greetingService.sendNewCompanyGreeting(event.getCompanyInfo());
+		}
 		CompanyAccount companyAccount = existingCompanyAccount.orElseGet(
 			() -> companyAccountService.createCompanyAccountFor(idOfCompanyPlacingTheOrder)
 		);

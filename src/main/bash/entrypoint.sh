@@ -1,3 +1,3 @@
 #!/bin/sh
 
-exec java ${JAVA_OPTS} -jar /${JAR_NAME} --signature.validation.use.https=true $*
+exec java ${JAVA_OPTS} -jar /${JAR_NAME} --spring.profiles.active=kubernetes $*
