@@ -3,3 +3,7 @@ spring.datasource:
     url: jdbc:mysql://localhost/chatty_pie_connector?createDatabaseIfNotExist=true
     username: root
     password: password
+
+spring.mail:
+    host: localhost
+    port: 3025

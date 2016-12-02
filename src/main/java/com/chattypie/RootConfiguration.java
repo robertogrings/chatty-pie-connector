@@ -6,6 +6,7 @@ import org.springframework.boot.context.embedded.tomcat.TomcatEmbeddedServletCon
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
+import org.springframework.mail.javamail.JavaMailSender;
 
 import ch.qos.logback.access.tomcat.LogbackValve;
 import com.appdirect.sdk.ConnectorSdkConfiguration;
@@ -19,6 +20,7 @@ import com.appdirect.sdk.appmarket.events.SubscriptionDeactivated;
 import com.appdirect.sdk.appmarket.events.SubscriptionOrder;
 import com.appdirect.sdk.appmarket.events.SubscriptionReactivated;
 import com.appdirect.sdk.appmarket.events.SubscriptionUpcomingInvoice;
+import com.appdirect.sdk.notification.HtmlEmailNotificationService;
 import com.chattypie.handler.SubscriptionCancelHandler;
 import com.chattypie.handler.SubscriptionChangeHandler;
 import com.chattypie.handler.SubscriptionClosedHandler;
@@ -30,6 +32,9 @@ import com.chattypie.service.appmarket.CompanyAccountService;
 import com.chattypie.service.appmarket.CompanyAccountServiceConfiguration;
 import com.chattypie.service.chattypie.ChattyPieAccessConfiguration;
 import com.chattypie.service.chattypie.chatroom.ChatroomService;
+import com.chattypie.service.chattypie.greeting.EmailContentGenerator;
+import com.chattypie.service.chattypie.greeting.EmailGreetingService;
+import com.chattypie.service.chattypie.greeting.GreetingService;
 
 @Configuration
 @Import({
@@ -57,8 +62,27 @@ public class RootConfiguration {
 	}
 
 	@Bean
-	public AppmarketEventHandler<SubscriptionOrder> subscriptionOrderHandler(CompanyAccountService companyAccountService, ChatroomService chatroomService) {
-		return new SubscriptionOrderHandler(companyAccountService, chatroomService);
+	public HtmlEmailNotificationService emailNotificationService(JavaMailSender javaMailSender) {
+		return new HtmlEmailNotificationService("do-not-reply@appdirect.com", javaMailSender);
+	}
+
+	@Bean
+	public GreetingService newCompanyGreetingService(EmailContentGenerator contentGenerator,
+													 HtmlEmailNotificationService emailNotificationService) {
+		return new EmailGreetingService(
+			contentGenerator,
+			emailNotificationService,
+			"Welcome to Chatty Pie!"
+		);
+	}
+
+	@Bean
+	public AppmarketEventHandler<SubscriptionOrder> subscriptionOrderHandler(
+		CompanyAccountService companyAccountService,
+		ChatroomService chatroomService,
+		GreetingService greetingsService) {
+
+		return new SubscriptionOrderHandler(companyAccountService, chatroomService, greetingsService);
 	}
 
 	@Bean
@@ -94,5 +118,16 @@ public class RootConfiguration {
 	@Bean
 	public ErrorHandler errorHandler() {
 		return new ErrorHandler();
+	}
+
+	@Bean
+	public HtmlEmailNotificationService notificationService(JavaMailSender javaMailSender) {
+		String fromAddress = "notifications@appdirect.com";
+		return new HtmlEmailNotificationService(fromAddress, javaMailSender);
+	}
+
+	@Bean
+	public EmailContentGenerator emailContentGenerator() {
+		return new EmailContentGenerator();
 	}
 }
