@@ -49,7 +49,7 @@ public class LocalDatasourceFactory implements DisposableBean {
 
 	public DataSource getDatasource() {
 		String url = format(
-			"jdbc:mysql://%s:%s/chatty_pie_connector?createDatabaseIfNotExist=true",
+			"jdbc:mysql://%s:%s/chatty_pie_connector?createDatabaseIfNotExist=true&useLegacyDatetimeCode=false",
 			mysqlHost.getHostName(),
 			mysqlHost.getPort(MYSQL_DATABASE_PORT)
 		);

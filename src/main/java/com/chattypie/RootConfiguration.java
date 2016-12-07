@@ -1,5 +1,9 @@
 package com.chattypie;
 
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.context.embedded.EmbeddedServletContainerFactory;
 import org.springframework.boot.context.embedded.tomcat.TomcatEmbeddedServletContainerFactory;
@@ -33,8 +37,9 @@ import com.chattypie.service.appmarket.CompanyAccountServiceConfiguration;
 import com.chattypie.service.chattypie.ChattyPieAccessConfiguration;
 import com.chattypie.service.chattypie.chatroom.ChatroomService;
 import com.chattypie.service.chattypie.greeting.EmailContentGenerator;
-import com.chattypie.service.chattypie.greeting.EmailGreetingService;
-import com.chattypie.service.chattypie.greeting.GreetingService;
+import com.chattypie.service.chattypie.greeting.EmailAsyncNotificationService;
+import com.chattypie.service.chattypie.greeting.AsyncNotificationService;
+import com.chattypie.web.ReportGenerationController;
 
 @Configuration
 @Import({
@@ -44,6 +49,9 @@ import com.chattypie.service.chattypie.greeting.GreetingService;
 })
 @EnableAutoConfiguration
 public class RootConfiguration {
+
+	@Value("${chatroom.report.subscriber}")
+	String chatroomReportSubscriberEmail;
 
 	@Bean
 	public DeveloperSpecificAppmarketCredentialsSupplier credentialsSupplier() {
@@ -67,12 +75,17 @@ public class RootConfiguration {
 	}
 
 	@Bean
-	public GreetingService newCompanyGreetingService(EmailContentGenerator contentGenerator,
-													 HtmlEmailNotificationService emailNotificationService) {
-		return new EmailGreetingService(
+	public ExecutorService executorService() {
+		return Executors.newFixedThreadPool(1);
+	}
+
+	@Bean
+	public AsyncNotificationService newCompanyGreetingService(EmailContentGenerator contentGenerator,
+															  HtmlEmailNotificationService emailNotificationService) {
+		return new EmailAsyncNotificationService(
+			executorService(),
 			contentGenerator,
-			emailNotificationService,
-			"Welcome to Chatty Pie!"
+			emailNotificationService
 		);
 	}
 
@@ -80,7 +93,7 @@ public class RootConfiguration {
 	public AppmarketEventHandler<SubscriptionOrder> subscriptionOrderHandler(
 		CompanyAccountService companyAccountService,
 		ChatroomService chatroomService,
-		GreetingService greetingsService) {
+		AsyncNotificationService greetingsService) {
 
 		return new SubscriptionOrderHandler(companyAccountService, chatroomService, greetingsService);
 	}
@@ -123,5 +136,17 @@ public class RootConfiguration {
 	@Bean
 	public EmailContentGenerator emailContentGenerator() {
 		return new EmailContentGenerator();
+	}
+
+	@Bean
+	public ReportGenerationController reportGenerationController(
+		ChatroomService chatroomService,
+		AsyncNotificationService asyncNotificationService) {
+
+		return new ReportGenerationController(
+			chatroomService,
+			asyncNotificationService,
+			chatroomReportSubscriberEmail
+		);
 	}
 }

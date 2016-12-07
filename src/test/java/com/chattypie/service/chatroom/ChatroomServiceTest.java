@@ -1,20 +1,28 @@
 package com.chattypie.service.chatroom;
 
 import static java.lang.String.format;
+import static java.time.ZonedDateTime.now;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.time.ZonedDateTime;
+import java.util.List;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.web.client.RestTemplate;
 
+import com.chattypie.persistence.model.ChatroomCreationRecord;
 import com.chattypie.service.chattypie.chatroom.Chatroom;
+import com.chattypie.service.chattypie.chatroom.ChatroomDao;
 import com.chattypie.service.chattypie.chatroom.ChatroomService;
+import com.google.common.collect.Lists;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ChatroomServiceTest {
@@ -24,9 +32,12 @@ public class ChatroomServiceTest {
 	@Mock
 	private RestTemplate mockRestTemplate;
 
+	@Mock
+	private ChatroomDao mockChatroomDao;
+
 	@Before
 	public void setUp() throws Exception {
-		testedChatroomService = new ChatroomService(mockRestTemplate, mockChattyPieHost);
+		testedChatroomService = new ChatroomService(mockRestTemplate, mockChatroomDao, mockChattyPieHost);
 	}
 
 	@Test
@@ -80,6 +91,8 @@ public class ChatroomServiceTest {
 		//Then
 		assertThat(roomForAccount.getId()).isEqualTo(expectedChatroomId);
 		assertThat(roomForAccount.getAccountId()).isEqualTo(testAccountId);
+		verify(mockChatroomDao)
+			.storeChatroom(eq(expectedChatroomId));
 	}
 
 	@Test
@@ -93,5 +106,24 @@ public class ChatroomServiceTest {
 		//Then
 		verify(mockRestTemplate)
 			.delete(eq(format("%s/rooms/%s", mockChattyPieHost, idOfChatroomToRemove)));
+	}
+
+	@Test
+	public void testChatroomsCreatedLastWeek_returnsTheInfoRetrievedFromTheUnderlyingDAO() throws Exception {
+		//Given
+		List<ChatroomCreationRecord> expectedChatrooms = Lists.newArrayList();
+		ArgumentCaptor<ZonedDateTime> sinceDateCaptor = ArgumentCaptor.forClass(ZonedDateTime.class);
+		when(mockChatroomDao.readCreatedSince(sinceDateCaptor.capture()))
+			.thenReturn(expectedChatrooms);
+
+		ZonedDateTime testStartTime = now();
+		ZonedDateTime aWeekBeforeTheTest = testStartTime.minusWeeks(1);
+		//When
+		testedChatroomService.chatroomsCreatedLastWeek();
+
+		//Then
+		assertThat(sinceDateCaptor.getValue())
+			.isAfter(aWeekBeforeTheTest.minusSeconds(5))
+			.isBefore(aWeekBeforeTheTest.plusSeconds(5));
 	}
 }

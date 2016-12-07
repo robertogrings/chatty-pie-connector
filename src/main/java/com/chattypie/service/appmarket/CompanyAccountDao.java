@@ -24,9 +24,9 @@ public class CompanyAccountDao {
 	Optional<CompanyAccount> readById(String requestedCompanyId) {
 		return Optional.ofNullable(
 			queryFactory
-			.selectFrom(companyAccount)
-			.where(companyAccount.id.eq(requestedCompanyId))
-			.fetchOne()
+				.selectFrom(companyAccount)
+				.where(companyAccount.id.eq(requestedCompanyId))
+				.fetchOne()
 		);
 	}
 }

@@ -1,0 +1,16 @@
+# docker-compose file for creating a local development environment
+version: '2'
+services:
+  db:
+    image: docker.appdirectondemand.com/appdirect/mysql:latest
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_USER: root
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: chatty_pie_connector
+
+  smtp:
+    image: greenmail/standalone:1.5.2
+    ports:
+      - "3025:3025"

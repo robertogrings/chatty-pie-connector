@@ -23,7 +23,7 @@ A minimal example of a connector using the service-integration SDK
 * run `ChattyPieConnectorApplication`
 
 ### On the command-line
-* `./mvnw package && java -jar target/chatty-pie-connector-*`
+* `./mvnw package && java -jar target/chatty-pie-connector.jar`
 
 This starts the connector application's http server and exposes the main
 endpoint `/api/v1/integration/processEvent` which a marketplace can send event notifications to.
