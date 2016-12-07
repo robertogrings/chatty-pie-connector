@@ -11,8 +11,8 @@ import com.querydsl.sql.SQLQueryFactory;
 public class CompanyAccountDaoIntegrationTestConfig {
 
 	@Bean
-	public TestDatabaseHandle testDatabaseUtils(JdbcTemplate jdbcTemplate) throws Exception {
-		return new TestDatabaseHandle(jdbcTemplate);
+	public TestDatabaseHandle testDatabaseUtils(JdbcTemplate jdbcTemplate, SQLQueryFactory testFactory) throws Exception {
+		return new TestDatabaseHandle(jdbcTemplate, testFactory);
 	}
 
 	@Bean

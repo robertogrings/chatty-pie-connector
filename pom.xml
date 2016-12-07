@@ -54,7 +54,7 @@
 		<dependency>
 			<groupId>com.appdirect</groupId>
 			<artifactId>service-integration-sdk</artifactId>
-			<version>1.5-SNAPSHOT</version>
+			<version>1.8-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>ch.qos.logback</groupId>
@@ -70,6 +70,11 @@
 			<groupId>org.flywaydb</groupId>
 			<artifactId>flyway-core</artifactId>
 			<version>4.0.3</version>
+		</dependency>
+		<dependency>
+			<groupId>com.samskivert</groupId>
+			<artifactId>jmustache</artifactId>
+			<version>1.13</version>
 		</dependency>
 
 		<!--Persistence-->
@@ -219,6 +224,13 @@
 					<sourceFolder/>
 					<exportBeans>true</exportBeans>
 					<beanAddToString>true</beanAddToString>
+					<typeMappings>
+						<typeMapping>
+							<table>chatroom_creation_record</table>
+							<column>creation_date</column>
+							<type>java.time.Instant</type>
+						</typeMapping>
+					</typeMappings>
 				</configuration>
 				<dependencies>
 					<dependency>

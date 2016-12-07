@@ -1,27 +1,37 @@
 package com.chattypie.service.chattypie.greeting;
 
-import static com.google.common.io.Resources.getResource;
-import static java.nio.charset.StandardCharsets.UTF_8;
+import static com.chattypie.util.ResourceUtils.readResourceFileAsString;
 
-import java.io.IOException;
+import java.time.ZonedDateTime;
+import java.util.List;
+import java.util.Map;
 
 import lombok.extern.slf4j.Slf4j;
 
-import com.google.common.io.Resources;
+import com.chattypie.persistence.model.ChatroomCreationRecord;
+import com.google.common.collect.ImmutableMap;
+import com.samskivert.mustache.Mustache;
+import com.samskivert.mustache.Template;
 
 @Slf4j
 public class EmailContentGenerator {
 
-	String generateWelcomeEmail(String companyName) {
-		try {
-			String template = Resources.toString(
-				getResource("templates/NewCompanyGreetingTemplate.html"),
-				UTF_8
-			);
-			return template.replace("$companyName$", companyName);
-		} catch (IOException e) {
-			log.error("Failed generating email content", e);
-			throw new RuntimeException(e);
-		}
+	String generateNewCompanyGreeting(String companyName) {
+		String template = readResourceFileAsString("templates/NewCompanyGreetingTemplate.html");
+		Template messageTemplate = Mustache.compiler().compile(template);
+		Map<String, String> params = ImmutableMap.<String, String>builder()
+			.put("companyName", companyName)
+			.build();
+		return messageTemplate.execute(params);
+	}
+
+	String generateCreatedChatroomsReport(ZonedDateTime reportGenerationDate, List<ChatroomCreationRecord> chatrooms) {
+		String template = readResourceFileAsString("templates/ChatroomsCreatedReport.html");
+		Template messageTemplate = Mustache.compiler().compile(template);
+		Map<String, Object> params = ImmutableMap.<String, Object>builder()
+			.put("chatrooms", chatrooms)
+			.put("reportGenerationDate", reportGenerationDate)
+			.build();
+		return messageTemplate.execute(params);
 	}
 }

@@ -26,14 +26,14 @@ import com.chattypie.util.TestDatabaseHandle;
 public class CompanyAccountDaoIntegrationTest {
 
 	@Autowired
-	CompanyAccountDao testedDao;
+	private CompanyAccountDao testedDao;
 
 	@Autowired
-	TestDatabaseHandle testDatabaseHandle;
+	private TestDatabaseHandle testDatabaseHandle;
 
 	@After
 	public void cleanDatabase() throws SQLException {
-		testDatabaseHandle.truncateSchema("chatty_pie_connector");
+		testDatabaseHandle.truncateSchema();
 	}
 
 	@Test
