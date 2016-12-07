@@ -9,8 +9,8 @@ A minimal example of a connector using the service-integration SDK
 
 ## Generating the DB classes
 * Ensure you have a local instance of MySql running (localhost:3306)
-* Ensure that your local db contains the latest version of the schema 
-	* You just have to run the application once while pointing to your local db and the schema would be 
+* Ensure that your local db contains the latest version of the schema
+    * You just have to run the application once while pointing to your local db and the schema would be
 		updated automatically
 * run `./mvnw clean install -DskipDbCodeGeneration=false -Dmodel.source.db.username=[your-local-db-user] -Dmodel.source.db.password=[your-local-db-password] -Dmodel.source.db.url=[connection-string-for-your-db-here]`.
 	* All flags EXCEPT `-DskipDbCodeGeneration=false` are optional: if your local MySql instance is running on localhost 3306 and has
@@ -32,7 +32,7 @@ The connector implements a single event handler that treats
 any event and returns a message containing the type of the event handled.
 
 Do note that by default the application is expecting a MySQL instance to be running
-at `localhost:3306`. If you do not have a local db instance running, start the application with 
+at `localhost:3306`. If you do not have a local db instance running, start the application with
 the spring profile `localdb` and it will start a local docker instance with MySQL for you.
 Note that:
 * You need to have docker installed for this to work
@@ -49,7 +49,7 @@ You can deploy the application to Kubernetes by triggering the following
 Jenkins job: `https://pi.ci.appdirect.tools/job/chatty-pie-connector-kubernetes-deploy-dsl/build?delay=0sec`
 
 The `version` field corresponds to the version of the Docker image to deploy,
-which in turn should match the project's version specified in the 
+which in turn should match the project's version specified in the
 root `pom.xml`
 
 ## Confirming it worked
@@ -62,6 +62,11 @@ Once deployed, the application can be accessed at this URL: https://dev-cpc.deva
 To verify that the server is running correctly, check if a GET request at https://dev-cpc.devappdirect.me/health
 returns 200(OK)
 
-+## Regular dependencies version update
- +* `mvn versions:update-parent`
- +* `mvn versions:use-latest-releases`
+## Dependencies version update
+Using the [`versions` maven plugin](http://www.mojohaus.org/versions-maven-plugin/), you can keep
+your dependencies & maven plugins up-to-date. Most of those commands directly modify your `pom.xml`.
+* update the `spring-boot` parent version: `./mvnw versions:update-parent`
+* update all dependencies: `./mvnw versions:use-latest-releases`
+    * Warning: this takes _15 minutes_ due to each dependency polling `artifactory.appdirect.com` (and it seems as if that is very slow)
+* display available maven plugin updates `./mvnw versions:display-plugin-updates`
+    * If newer versions are available, you will need to manually update `pom.xml`.
