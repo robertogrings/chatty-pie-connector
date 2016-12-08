@@ -63,7 +63,7 @@
 		<dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
-			<version>1.16.10</version>
+			<version>1.16.12</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
@@ -96,7 +96,7 @@
 		<dependency>
 			<groupId>org.assertj</groupId>
 			<artifactId>assertj-core</artifactId>
-			<version>3.6.0</version>
+			<version>3.6.1</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
@@ -105,9 +105,22 @@
 			<scope>test</scope>
 		</dependency>
 		<dependency>
+			<groupId>oauth.signpost</groupId>
+			<artifactId>signpost-commonshttp4</artifactId>
+			<version>1.2.1.2</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.icegreen</groupId>
+			<artifactId>greenmail</artifactId>
+			<version>1.5.2</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
 			<groupId>com.xebialabs.cloud</groupId>
 			<artifactId>overcast</artifactId>
 			<version>2.6.0-SNAPSHOT</version>
+			<scope>test</scope>
 			<exclusions>
 				<exclusion>
 					<groupId>javax.ws.rs</groupId>
@@ -136,7 +149,7 @@
 			</properties>
 		</profile>
 	</profiles>
-	
+
 	<build>
 		<finalName>${project.artifactId}</finalName>
 		<plugins>
@@ -154,10 +167,6 @@
 						<goals>
 							<goal>prepare-agent</goal>
 						</goals>
-						<configuration>
-							<destFile>${project.basedir}/target/jacoco-ut.exec</destFile>
-							<append>true</append>
-						</configuration>
 					</execution>
 					<execution>
 						<id>post-unit-test</id>
@@ -165,10 +174,6 @@
 						<goals>
 							<goal>report</goal>
 						</goals>
-						<configuration>
-							<dataFile>${project.basedir}/target/jacoco-ut.exec</dataFile>
-							<outputDirectory>${project.reporting.outputDirectory}/jacoco-ut</outputDirectory>
-						</configuration>
 					</execution>
 					<execution>
 						<id>pre-integration-test</id>
@@ -177,9 +182,7 @@
 							<goal>prepare-agent</goal>
 						</goals>
 						<configuration>
-							<destFile>${project.basedir}/target/jacoco-it.exec</destFile>
 							<propertyName>failsafeArgLine</propertyName>
-							<append>true</append>
 						</configuration>
 					</execution>
 					<execution>
@@ -188,12 +191,14 @@
 						<goals>
 							<goal>report</goal>
 						</goals>
-						<configuration>
-							<dataFile>${project.basedir}/target/jacoco-it.exec</dataFile>
-							<outputDirectory>${project.reporting.outputDirectory}/jacoco-it</outputDirectory>
-						</configuration>
 					</execution>
 				</executions>
+				<configuration>
+					<append>true</append>
+					<destFile>${project.basedir}/target/jacoco-ut.exec</destFile>
+					<dataFile>${project.basedir}/target/jacoco-ut.exec</dataFile>
+					<outputDirectory>${project.reporting.outputDirectory}/jacoco-ut</outputDirectory>
+				</configuration>
 			</plugin>
 			<plugin>
 				<groupId>pl.project13.maven</groupId>
@@ -252,6 +257,40 @@
 					</imageTags>
 					<serverId>docker</serverId>
 					<registryUrl>https://docker.appdirectondemand.com/v2/</registryUrl>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-failsafe-plugin</artifactId>
+			</plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>exec-maven-plugin</artifactId>
+				<version>1.5.0</version>
+				<executions>
+					<execution>
+						<id>start-mysql-docker-container</id>
+						<phase>pre-integration-test</phase>
+						<goals>
+							<goal>exec</goal>
+						</goals>
+					</execution>
+					<execution>
+						<id>stop-mysql-docker-container</id>
+						<phase>post-integration-test</phase>
+						<goals>
+							<goal>exec</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<executable>java</executable>
+					<arguments>
+						<argument>-classpath</argument>
+						<classpath/>
+						<argument>com.chattypie.util.ManageMysqlInDockerContainer</argument>
+					</arguments>
+					<classpathScope>test</classpathScope>
 				</configuration>
 			</plugin>
 			<plugin>

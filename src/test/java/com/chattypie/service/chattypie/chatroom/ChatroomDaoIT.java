@@ -13,24 +13,24 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import com.chattypie.datasource.DatasourceConfiguration;
 import com.chattypie.persistence.model.ChatroomCreationRecord;
-import com.chattypie.util.OptionalLocalDatasourceConfiguration;
+import com.chattypie.util.LocalDockerMysqlDatasourceConfiguration;
 import com.chattypie.util.TestDatabaseHandle;
+import com.mysql.jdbc.jdbc2.optional.MysqlDataSource;
 import com.querydsl.sql.SQLQueryFactory;
 
 @RunWith(SpringRunner.class)
-@ContextConfiguration(classes = {DatasourceConfiguration.class, OptionalLocalDatasourceConfiguration.class})
-public class ChatroomDaoIntegrationTest {
-
+@ContextConfiguration(classes = {DatasourceConfiguration.class, LocalDockerMysqlDatasourceConfiguration.class})
+public class ChatroomDaoIT {
 	@Autowired
 	private SQLQueryFactory queryFactory;
+
 	@Autowired
-	private JdbcTemplate jdbcTemplate;
+	private MysqlDataSource dataSource;
 
 	private TestDatabaseHandle testDb;
 
@@ -39,7 +39,7 @@ public class ChatroomDaoIntegrationTest {
 	@Before
 	public void setUp() throws Exception {
 		testedChatroomDao = new ChatroomDao(queryFactory);
-		testDb = new TestDatabaseHandle(jdbcTemplate, queryFactory);
+		testDb = new TestDatabaseHandle(dataSource.getUrl());
 	}
 
 	@After
