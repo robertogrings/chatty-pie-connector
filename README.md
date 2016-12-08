@@ -57,7 +57,8 @@ root `pom.xml`
     * this script checks to make sure all pods are returning the same git hash
 
 ## Accessing the app
-Once deployed, the application can be accessed at this URL: https://dev-cpc.devappdirect.me/info
+* In dev, it is at https://dev-cpc.devappdirect.me
+* In test, it is at https://test-cpc.devappdirect.me/
 
 To verify that the server is running correctly, check if a GET request at https://dev-cpc.devappdirect.me/health
 returns 200(OK)
