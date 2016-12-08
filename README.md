@@ -31,12 +31,12 @@ endpoint `/api/v1/integration/processEvent` which a marketplace can send event n
 The connector implements a single event handler that treats
 any event and returns a message containing the type of the event handled.
 
-Do note that by default the application is expecting a MySQL instance to be running
-at `localhost:3306`. If you do not have a local db instance running, start the application with
-the spring profile `localdb` and it will start a local docker instance with MySQL for you.
-Note that:
-* You need to have docker installed for this to work
-* The instance will be automatically removed when you exit the application
+### Starting dependencies locally
+By default the application is expecting a MySQL instance to be running
+at `localhost:3306` and a smtp server running on `localhost:3025`.
+If you do not have both, we offer a docker compose file at the root. Run it with
+
+    docker-compose up
 
 ## Deploying the application
 This application is deployed to Kubernetes

@@ -6,30 +6,38 @@ import java.sql.SQLException;
 import java.util.Optional;
 
 import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.ContextHierarchy;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import com.chattypie.datasource.DatasourceConfiguration;
 import com.chattypie.persistence.model.CompanyAccount;
-import com.chattypie.util.OptionalLocalDatasourceConfiguration;
+import com.chattypie.util.LocalDockerMysqlDatasourceConfiguration;
 import com.chattypie.util.TestDatabaseHandle;
+import com.mysql.jdbc.jdbc2.optional.MysqlDataSource;
+import com.querydsl.sql.SQLQueryFactory;
 
 @RunWith(SpringRunner.class)
-@ContextHierarchy({
-	@ContextConfiguration(classes = {DatasourceConfiguration.class, OptionalLocalDatasourceConfiguration.class}),
-	@ContextConfiguration(classes = {CompanyAccountDaoIntegrationTestConfig.class})
-})
-public class CompanyAccountDaoIntegrationTest {
+@ContextConfiguration(classes = {DatasourceConfiguration.class, LocalDockerMysqlDatasourceConfiguration.class})
+public class CompanyAccountDaoIT {
+	@Autowired
+	private SQLQueryFactory queryFactory;
 
 	@Autowired
+	private MysqlDataSource dataSource;
+
+	private TestDatabaseHandle testDatabaseHandle;
+
 	private CompanyAccountDao testedDao;
 
-	@Autowired
-	private TestDatabaseHandle testDatabaseHandle;
+	@Before
+	public void setUp() throws Exception {
+		testDatabaseHandle = new TestDatabaseHandle(dataSource.getUrl());
+		testedDao = new CompanyAccountDao(queryFactory);
+	}
 
 	@After
 	public void cleanDatabase() throws SQLException {
