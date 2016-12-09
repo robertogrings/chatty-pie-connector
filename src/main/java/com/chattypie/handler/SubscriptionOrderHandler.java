@@ -14,7 +14,7 @@ import com.chattypie.persistence.model.CompanyAccount;
 import com.chattypie.service.appmarket.CompanyAccountService;
 import com.chattypie.service.chattypie.chatroom.Chatroom;
 import com.chattypie.service.chattypie.chatroom.ChatroomService;
-import com.chattypie.service.chattypie.greeting.AsyncNotificationService;
+import com.chattypie.service.chattypie.greeting.NotificationService;
 
 @RequiredArgsConstructor
 public class SubscriptionOrderHandler implements AppmarketEventHandler<SubscriptionOrder> {
@@ -23,7 +23,7 @@ public class SubscriptionOrderHandler implements AppmarketEventHandler<Subscript
 
 	private final CompanyAccountService companyAccountService;
 	private final ChatroomService chatroomService;
-	private final AsyncNotificationService asyncNotificationService;
+	private final NotificationService notificationService;
 
 	@Override
 	public APIResult handle(SubscriptionOrder event) {
@@ -37,7 +37,7 @@ public class SubscriptionOrderHandler implements AppmarketEventHandler<Subscript
 		Chatroom chatroom = chatroomService.createChatroomForAccount(companyAccount.getAccountId(), chatroomName);
 
 		if (!existingCompanyAccount.isPresent()) {
-			asyncNotificationService.sendNewCompanyGreeting(event.getCompanyInfo());
+			notificationService.sendNewCompanyGreeting(event.getCompanyInfo());
 		}
 
 		APIResult success = APIResult.success(format("Successfully placed order for account: %s", companyAccount));

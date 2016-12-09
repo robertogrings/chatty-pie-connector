@@ -1,17 +1,15 @@
 package com.chattypie.service.chattypie.greeting;
 
-import static com.chattypie.service.chattypie.greeting.EmailAsyncNotificationService.WELCOME_EMAIL_SUBJECT;
+import static com.chattypie.service.chattypie.greeting.EmailNotificationService.CHATROOMS_CREATED_REPORT_SUBJECT;
+import static com.chattypie.service.chattypie.greeting.EmailNotificationService.WELCOME_EMAIL_SUBJECT;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.time.Instant;
 import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -21,28 +19,27 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 import com.appdirect.sdk.appmarket.events.CompanyInfo;
 import com.appdirect.sdk.notification.HtmlEmailNotificationService;
-import com.appdirect.sdk.notification.SendNotificationFailedException;
 import com.chattypie.persistence.model.ChatroomCreationRecord;
 import com.google.common.collect.Lists;
 
 @RunWith(MockitoJUnitRunner.class)
-public class EmailAsyncNotificationServiceTest {
+public class EmailNotificationServiceTest {
 
-	private EmailAsyncNotificationService testedGreetingService;
+	private EmailNotificationService testedGreetingService;
 
 	@Mock
 	private HtmlEmailNotificationService mockEmailNotificationService;
-	private ExecutorService testExecutorService = Executors.newSingleThreadExecutor();
+
 	@Mock
 	private EmailContentGenerator mockContentGenerator;
 
 	@Before
 	public void setUp() throws Exception {
-		testedGreetingService = new EmailAsyncNotificationService(testExecutorService, mockContentGenerator, mockEmailNotificationService);
+		testedGreetingService = new EmailNotificationService(mockContentGenerator, mockEmailNotificationService);
 	}
 
 	@Test
-	public void testSendWeeklyChatroomCreatedReport_whenCalledWithATargetAddressAndAListOfCreatedChatrooms_reportIsgeneratedAndSent() throws Exception {
+	public void testSendDailyChatroomCreatedReport_whenCalledWithATargetAddressAndAListOfCreatedChatrooms_reportIsgeneratedAndSent() throws Exception {
 		//Given
 		String testSubscriberEmail = "test@example.com";
 		ChatroomCreationRecord chatroom1 = new ChatroomCreationRecord(Instant.EPOCH, "chatroom1");
@@ -57,12 +54,12 @@ public class EmailAsyncNotificationServiceTest {
 			.thenReturn(expectedReportBody);
 
 		//When
-		testedGreetingService.sendWeeklyChatroomCreatedReport(testSubscriberEmail, expectedChatrooms);
+		testedGreetingService.sendDailyChatroomCreatedReport(testSubscriberEmail, expectedChatrooms);
 
 		//Then
 		verify(mockEmailNotificationService)
 			.sendHtmlEmail(
-				eq(WELCOME_EMAIL_SUBJECT),
+				eq(CHATROOMS_CREATED_REPORT_SUBJECT),
 				eq(expectedReportBody),
 				eq(testSubscriberEmail)
 			);

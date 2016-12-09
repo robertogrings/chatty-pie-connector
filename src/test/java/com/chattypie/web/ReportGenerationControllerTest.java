@@ -1,6 +1,5 @@
 package com.chattypie.web;
 
-import static org.junit.Assert.*;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.verify;
@@ -16,7 +15,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 import com.chattypie.persistence.model.ChatroomCreationRecord;
 import com.chattypie.service.chattypie.chatroom.ChatroomService;
-import com.chattypie.service.chattypie.greeting.AsyncNotificationService;
+import com.chattypie.service.chattypie.greeting.NotificationService;
 import com.google.common.collect.Lists;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -27,7 +26,7 @@ public class ReportGenerationControllerTest {
 	@Mock
 	private ChatroomService mockChatroomService;
 	@Mock
-	private AsyncNotificationService mockNotificationService;
+	private NotificationService mockNotificationService;
 
 	@Before
 	public void setUp() throws Exception {
@@ -39,10 +38,10 @@ public class ReportGenerationControllerTest {
 	}
 
 	@Test
-	public void testGetChatroomReport_whenInvoked_thenWeGetInfoOnChatroomsCreatedLastWeekAndSendAReport() throws Exception {
+	public void testGetChatroomReport_whenInvoked_thenWeGetInfoOnChatroomsCreatedLast24hAndSendAReport() throws Exception {
 		//Given
 		List<ChatroomCreationRecord> expectedChatrooms = Lists.newArrayList();
-		when(mockChatroomService.chatroomsCreatedLastWeek())
+		when(mockChatroomService.chatroomsCreatedOverTheLastDay())
 			.thenReturn(expectedChatrooms);
 
 		//When
@@ -50,7 +49,7 @@ public class ReportGenerationControllerTest {
 
 		//Then
 		verify(mockNotificationService)
-			.sendWeeklyChatroomCreatedReport(anyString(), eq(expectedChatrooms));
+			.sendDailyChatroomCreatedReport(anyString(), eq(expectedChatrooms));
 
 	}
 }

@@ -22,7 +22,6 @@ public class FakeChattyPie {
 
 	private final HttpServer server;
 	private final List<String> allRequestPaths;
-	private String lastRequestBody;
 	private String supportedAccountId;
 
 	public static FakeChattyPie create(int port) throws IOException {

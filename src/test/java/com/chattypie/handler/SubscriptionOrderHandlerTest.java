@@ -22,7 +22,7 @@ import com.chattypie.persistence.model.CompanyAccount;
 import com.chattypie.service.appmarket.CompanyAccountService;
 import com.chattypie.service.chattypie.chatroom.Chatroom;
 import com.chattypie.service.chattypie.chatroom.ChatroomService;
-import com.chattypie.service.chattypie.greeting.AsyncNotificationService;
+import com.chattypie.service.chattypie.greeting.NotificationService;
 
 @RunWith(MockitoJUnitRunner.class)
 public class SubscriptionOrderHandlerTest {
@@ -36,11 +36,11 @@ public class SubscriptionOrderHandlerTest {
 	private CompanyAccountService mockCompanyAccountService;
 
 	@Mock
-	private AsyncNotificationService mockAsyncNotificationService;
+	private NotificationService mockNotificationService;
 
 	@Before
 	public void setUp() throws Exception {
-		testedSubscriptionOrderHandler = new SubscriptionOrderHandler(mockCompanyAccountService, mockChatroomService, mockAsyncNotificationService);
+		testedSubscriptionOrderHandler = new SubscriptionOrderHandler(mockCompanyAccountService, mockChatroomService, mockNotificationService);
 	}
 
 	@Test
