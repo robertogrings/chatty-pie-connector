@@ -82,10 +82,6 @@ public class FakeAppmarket {
 		}
 	}
 
-	public String lastRequestPath() {
-		return lastItemOrNull(allRequestPaths);
-	}
-
 	public List<String> allRequestPaths() {
 		return new ArrayList<>(allRequestPaths);
 	}
@@ -118,17 +114,13 @@ public class FakeAppmarket {
 		return "http://localhost:" + server.getAddress().getPort();
 	}
 
-	private <T> T lastItemOrNull(List<T> list) {
-		return list.isEmpty() ? null : list.get(list.size() - 1);
-	}
-
 	private void oauthSign(HttpGet request) throws OAuthMessageSignerException, OAuthExpectationFailedException, OAuthCommunicationException {
 		OAuthConsumer consumer = new CommonsHttpOAuthConsumer(isvKey, isvSecret);
 		consumer.sign(request);
 	}
 
 	public void waitForResolvedEvents(int desiredNumberOfResolvedEvents) throws Exception {
-		long maxNumberOfTries = 100, timeoutOfOneTryMs = 50;
+		long maxNumberOfTries = 200, timeoutOfOneTryMs = 50;
 		synchronized (resolvedEventsLock) {
 			int tries = 0;
 			while (resolvedEvents.size() < desiredNumberOfResolvedEvents && tries < maxNumberOfTries) {
