@@ -1,7 +1,9 @@
 package com.chattypie.service.chattypie;
 
 import static java.lang.String.format;
+import static java.time.Duration.ofSeconds;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import org.junit.Before;
@@ -13,6 +15,7 @@ import org.springframework.web.client.RestTemplate;
 
 import com.chattypie.service.chattypie.account.ChattyPieAccount;
 import com.chattypie.service.chattypie.account.ChattyPieAccountService;
+import com.chattypie.util.Delayer;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ChattyPieAccountServiceTest {
@@ -21,11 +24,13 @@ public class ChattyPieAccountServiceTest {
 
 	@Mock
 	private RestTemplate mockRestTemplate;
+	@Mock
+	private Delayer delayer;
 	private String mockChattyPieHost = "http://www.example.com";
 
 	@Before
 	public void setUp() throws Exception {
-		testedService = new ChattyPieAccountService(mockRestTemplate, mockChattyPieHost);
+		testedService = new ChattyPieAccountService(mockRestTemplate, mockChattyPieHost, delayer);
 	}
 
 	@Test
@@ -34,11 +39,11 @@ public class ChattyPieAccountServiceTest {
 		int expectedMaxRooms = 100;
 		ChattyPieAccount expectedChattyPieAccount = new ChattyPieAccount("someId", expectedMaxRooms);
 		when(
-			mockRestTemplate.postForObject(
-				format("%s/accounts", mockChattyPieHost),
-				format("{\"max_allowed_rooms\": %d}", expectedMaxRooms),
-				ChattyPieAccount.class
-			)
+				mockRestTemplate.postForObject(
+						format("%s/accounts", mockChattyPieHost),
+						format("{\"max_allowed_rooms\": %d}", expectedMaxRooms),
+						ChattyPieAccount.class
+				)
 		).thenReturn(expectedChattyPieAccount);
 
 		//When
@@ -46,6 +51,6 @@ public class ChattyPieAccountServiceTest {
 
 		//Then
 		assertThat(chattyPieAccountCreated).isEqualTo(expectedChattyPieAccount);
+		verify(delayer).delayFor(ofSeconds(5));
 	}
-
 }
