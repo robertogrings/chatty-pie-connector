@@ -117,13 +117,11 @@ public class ChatroomServiceTest {
 			.thenReturn(expectedChatrooms);
 
 		ZonedDateTime testStartTime = now();
-		ZonedDateTime aWeekBeforeTheTest = testStartTime.minusWeeks(1);
+
 		//When
-		testedChatroomService.chatroomsCreatedLastWeek();
+		List<ChatroomCreationRecord> actualChatroomsCreated = testedChatroomService.chatroomsCreatedOverTheLastDay();
 
 		//Then
-		assertThat(sinceDateCaptor.getValue())
-			.isAfter(aWeekBeforeTheTest.minusSeconds(5))
-			.isBefore(aWeekBeforeTheTest.plusSeconds(5));
+		assertThat(actualChatroomsCreated).isEqualTo(expectedChatrooms);
 	}
 }

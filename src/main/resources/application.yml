@@ -1,5 +1,5 @@
 chatty.pie.host: https://operating-attic-146121.appspot.com
-chatroom.report.subscriber: partner.integrations@appdirect.com
+chatroom.report.subscriber: chatty.pie.team@yopmail.com
 spring.datasource:
     #See http://stackoverflow.com/questions/7605953/how-to-change-mysql-timezone-in-java-connection for explanation 
     #on the `useLegacyDatetimeCode` parameter

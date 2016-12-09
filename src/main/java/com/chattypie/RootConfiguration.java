@@ -37,8 +37,8 @@ import com.chattypie.service.appmarket.CompanyAccountServiceConfiguration;
 import com.chattypie.service.chattypie.ChattyPieAccessConfiguration;
 import com.chattypie.service.chattypie.chatroom.ChatroomService;
 import com.chattypie.service.chattypie.greeting.EmailContentGenerator;
-import com.chattypie.service.chattypie.greeting.EmailAsyncNotificationService;
-import com.chattypie.service.chattypie.greeting.AsyncNotificationService;
+import com.chattypie.service.chattypie.greeting.EmailNotificationService;
+import com.chattypie.service.chattypie.greeting.NotificationService;
 import com.chattypie.web.ReportGenerationController;
 
 @Configuration
@@ -80,10 +80,9 @@ public class RootConfiguration {
 	}
 
 	@Bean
-	public AsyncNotificationService newCompanyGreetingService(EmailContentGenerator contentGenerator,
-															  HtmlEmailNotificationService emailNotificationService) {
-		return new EmailAsyncNotificationService(
-			executorService(),
+	public NotificationService newCompanyGreetingService(EmailContentGenerator contentGenerator,
+														 HtmlEmailNotificationService emailNotificationService) {
+		return new EmailNotificationService(
 			contentGenerator,
 			emailNotificationService
 		);
@@ -93,7 +92,7 @@ public class RootConfiguration {
 	public AppmarketEventHandler<SubscriptionOrder> subscriptionOrderHandler(
 		CompanyAccountService companyAccountService,
 		ChatroomService chatroomService,
-		AsyncNotificationService greetingsService) {
+		NotificationService greetingsService) {
 
 		return new SubscriptionOrderHandler(companyAccountService, chatroomService, greetingsService);
 	}
@@ -141,11 +140,11 @@ public class RootConfiguration {
 	@Bean
 	public ReportGenerationController reportGenerationController(
 		ChatroomService chatroomService,
-		AsyncNotificationService asyncNotificationService) {
+		NotificationService notificationService) {
 
 		return new ReportGenerationController(
 			chatroomService,
-			asyncNotificationService,
+			notificationService,
 			chatroomReportSubscriberEmail
 		);
 	}

@@ -49,7 +49,7 @@ public class ChatroomService {
 		);
 	}
 
-	public List<ChatroomCreationRecord> chatroomsCreatedLastWeek() {
-		return chatroomDao.readCreatedSince(now().minusWeeks(1));
+	public List<ChatroomCreationRecord> chatroomsCreatedOverTheLastDay() {
+		return chatroomDao.readCreatedSince(now().minusDays(1));
 	}
 }
