@@ -10,3 +10,6 @@ spring.datasource:
 spring.mail:
     host: localhost
     port: 3025
+
+management.security.enabled: false
+endpoints.health.sensitive: false
