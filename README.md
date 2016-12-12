@@ -38,24 +38,6 @@ If you do not have both, we offer a docker compose file at the root. Run it with
 
     docker-compose up
 
-## Deploying the application
-This application is deployed to Kubernetes
-
-### Kubernetes:
-Check the developer documentation available [here](https://appdirect.jira.com/wiki/display/EN/Developer+Access).
-
-### Jenkins Job
-You can deploy the application to Kubernetes by triggering the following
-Jenkins job: `https://pi.ci.appdirect.tools/job/chatty-pie-connector-kubernetes-deploy-dsl/build?delay=0sec`
-
-The `version` field corresponds to the version of the Docker image to deploy,
-which in turn should match the project's version specified in the
-root `pom.xml`
-
-## Confirming it worked
-* make sure all pods are running the same binary with `./check-deploy-integrity.sh`
-    * this script checks to make sure all pods are returning the same git hash
-
 ## Accessing the app
 The chatty-pie-connector should always be deployed in 3 environments: DEV, TEST and PROD
 The URL for each of these three endpoints are available below:
