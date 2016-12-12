@@ -54,7 +54,7 @@
 		<dependency>
 			<groupId>com.appdirect</groupId>
 			<artifactId>service-integration-sdk</artifactId>
-			<version>1.8-SNAPSHOT</version>
+			<version>1.8</version>
 		</dependency>
 		<dependency>
 			<groupId>ch.qos.logback</groupId>
