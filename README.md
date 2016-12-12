@@ -57,10 +57,16 @@ root `pom.xml`
     * this script checks to make sure all pods are returning the same git hash
 
 ## Accessing the app
-* In dev, it is at https://dev-cpc.devappdirect.me
-* In test, it is at https://test-cpc.devappdirect.me/
+The chatty-pie-connector should always be deployed in 3 environments: DEV, TEST and PROD
+The URL for each of these three endpoints are available below:
 
-To verify that the server is running correctly, check if a GET request at https://dev-cpc.devappdirect.me/health
+* The DEV instance is available [here](https://dev-cpc.devappdirect.me)
+* The TEST instance is available [here](https://test-cpc.devappdirect.me/)
+* The PROD instance is not deployed yet, this will be updated as soon as the first deployment in PROD is completed
+
+To verify that the server is running correctly, check if a GET request at the `/health`
+endpoint of a running CPC instance. For example, the endpoint for the dev 
+[https://dev-cpc.devappdirect.me/health](https://dev-cpc.devappdirect.me/health)
 returns 200(OK)
 
 ## Dependencies version update
@@ -71,3 +77,7 @@ your dependencies & maven plugins up-to-date. Most of those commands directly mo
     * Warning: this takes _15 minutes_ due to each dependency polling `artifactory.appdirect.com` (and it seems as if that is very slow)
 * display available maven plugin updates `./mvnw versions:display-plugin-updates`
     * If newer versions are available, you will need to manually update `pom.xml`.
+
+## Deployment procedure:
+The instructions for deploying the application vary according to the target environment. Check them out at the 
+[project wiki](https://github.com/AppDirect/chatty-pie-connector/wiki/Deployment-Procedure) 
