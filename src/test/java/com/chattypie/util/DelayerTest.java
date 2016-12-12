@@ -17,6 +17,6 @@ public class DelayerTest {
 
 		new Delayer().delayFor(ofMillis(500));
 
-		assertThat(stopWatch.elapsed(MILLISECONDS)).isCloseTo(500L, within(20L));
+		assertThat(stopWatch.elapsed(MILLISECONDS)).isCloseTo(500L, within(50L));
 	}
 }
