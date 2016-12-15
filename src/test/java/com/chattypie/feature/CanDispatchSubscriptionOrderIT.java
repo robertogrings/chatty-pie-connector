@@ -31,7 +31,7 @@ public class CanDispatchSubscriptionOrderIT {
 		mysqlDockerContainer = newContainer().startAndWait();
 		db = new TestDatabaseHandle(testUrl(mysqlDockerContainer.getHostAndPort()));
 
-		fakeAppmarket = FakeAppmarket.create(localConnectorPort + 1, "isv-key", "xBzbtLgp1V7m").start();
+		fakeAppmarket = FakeAppmarket.create(localConnectorPort + 1, "very-secure", "password").start();
 		fakeChattyPie = FakeChattyPie.create(localConnectorPort + 2).start();
 		fakeEmailServer = FakeEmailServer.create(localConnectorPort + 3).start();
 
