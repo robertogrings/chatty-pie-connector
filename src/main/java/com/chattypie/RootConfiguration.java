@@ -15,7 +15,6 @@ import org.springframework.mail.javamail.JavaMailSender;
 import ch.qos.logback.access.tomcat.LogbackValve;
 import com.appdirect.sdk.ConnectorSdkConfiguration;
 import com.appdirect.sdk.appmarket.AppmarketEventHandler;
-import com.appdirect.sdk.appmarket.Credentials;
 import com.appdirect.sdk.appmarket.DeveloperSpecificAppmarketCredentialsSupplier;
 import com.appdirect.sdk.appmarket.events.SubscriptionCancel;
 import com.appdirect.sdk.appmarket.events.SubscriptionChange;
@@ -39,6 +38,8 @@ import com.chattypie.service.chattypie.chatroom.ChatroomService;
 import com.chattypie.service.chattypie.greeting.EmailContentGenerator;
 import com.chattypie.service.chattypie.greeting.EmailNotificationService;
 import com.chattypie.service.chattypie.greeting.NotificationService;
+import com.chattypie.util.MapBuilder;
+import com.chattypie.web.StringBackedCredentialsSupplier;
 import com.chattypie.web.ReportGenerationController;
 
 @Configuration
@@ -54,8 +55,8 @@ public class RootConfiguration {
 	String chatroomReportSubscriberEmail;
 
 	@Bean
-	public DeveloperSpecificAppmarketCredentialsSupplier credentialsSupplier() {
-		return consumerKey -> new Credentials(consumerKey, "xBzbtLgp1V7m");
+	public DeveloperSpecificAppmarketCredentialsSupplier environmentCredentialsSupplier(@Value("${connector.allowed.credentials}") String allowedCredentials) {
+		return new StringBackedCredentialsSupplier(allowedCredentials, new MapBuilder());
 	}
 
 	@Bean
