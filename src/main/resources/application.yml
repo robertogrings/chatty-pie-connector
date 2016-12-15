@@ -11,5 +11,22 @@ spring.mail:
     host: localhost
     port: 3025
 
-management.security.enabled: false
-endpoints.health.sensitive: false
+endpoints:
+  enabled: false
+  info:
+    enabled: true
+    sensitive: false
+  health:
+      enabled: true
+      sensitive: false
+      time-to-live: 5000
+
+info:
+  build:
+    name: @project.name@
+    description: @project.description@
+    version: @project.version@
+
+management:
+  security:
+    enabled: false
