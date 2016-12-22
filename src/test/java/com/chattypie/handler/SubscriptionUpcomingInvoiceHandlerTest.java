@@ -3,6 +3,8 @@ package com.chattypie.handler;
 import static com.appdirect.sdk.appmarket.events.AccountStatus.ACTIVE;
 import static org.assertj.core.api.Assertions.assertThat;
 
+import java.util.HashMap;
+
 import org.junit.Test;
 
 import com.appdirect.sdk.appmarket.events.APIResult;
@@ -16,8 +18,10 @@ public class SubscriptionUpcomingInvoiceHandlerTest {
 	public void handleUpcomingInvoiceEvent_whenReceived_thenReturnSuccess() throws Exception {
 		//GIven
 		SubscriptionUpcomingInvoice testEvent = new SubscriptionUpcomingInvoice(
-			new AccountInfo("", ACTIVE)
-		);
+				"some-key",
+				AccountInfo.builder().status(ACTIVE).build(),
+				new HashMap<>(),
+				null);
 
 		//When
 		APIResult result = testtedHandler.handle(testEvent);

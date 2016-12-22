@@ -4,6 +4,8 @@ import static com.appdirect.sdk.appmarket.events.AccountStatus.CANCELLED;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
 
+import java.util.HashMap;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -33,7 +35,12 @@ public class SubscriptionClosedHandlerTest {
 		//Given
 		String testChatroomIdentifier = "testAccountIdentifier";
 		SubscriptionClosed testSubscriptionEvent = new SubscriptionClosed(
-			new AccountInfo(testChatroomIdentifier, CANCELLED)
+				"some-key",
+				AccountInfo.builder()
+						.accountIdentifier(testChatroomIdentifier)
+						.status(CANCELLED).build(),
+				new HashMap<>(),
+				null
 		);
 
 		//When

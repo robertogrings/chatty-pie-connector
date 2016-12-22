@@ -4,6 +4,8 @@ import static org.assertj.core.api.Java6Assertions.assertThat;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.verify;
 
+import java.util.HashMap;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -30,7 +32,7 @@ public class SubscriptionCancelHandlerTest {
 	public void handleSubscriptionCancel_shouldSuspendChatroom() throws Exception {
 		//Given
 		String testAppmarketAccountId = "test-id-value";
-		SubscriptionCancel testCancelEvent = new SubscriptionCancel("some-key", testAppmarketAccountId);
+		SubscriptionCancel testCancelEvent = new SubscriptionCancel("some-key", testAppmarketAccountId, new HashMap<>(), null);
 
 		//When
 		APIResult eventResponse = testedEventHandler.handle(testCancelEvent);
