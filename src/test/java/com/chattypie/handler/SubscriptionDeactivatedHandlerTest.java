@@ -5,6 +5,8 @@ import static org.assertj.core.api.Java6Assertions.assertThat;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.verify;
 
+import java.util.HashMap;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -33,7 +35,12 @@ public class SubscriptionDeactivatedHandlerTest {
 		//Given
 		String testAppmarketAccountId = "test-id-value";
 		SubscriptionDeactivated testCancelEvent = new SubscriptionDeactivated(
-			new AccountInfo(testAppmarketAccountId, ACTIVE)
+				"some-key",
+				AccountInfo.builder()
+						.accountIdentifier(testAppmarketAccountId)
+						.status(ACTIVE).build(),
+				new HashMap<>(),
+				null
 		);
 
 		//When

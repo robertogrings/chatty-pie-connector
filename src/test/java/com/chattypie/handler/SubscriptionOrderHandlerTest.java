@@ -111,6 +111,7 @@ public class SubscriptionOrderHandlerTest {
 				.build(),
 			null,
 			null,
+			null,
 			null
 		);
 	}
