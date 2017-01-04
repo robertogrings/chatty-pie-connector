@@ -23,6 +23,8 @@ import com.appdirect.sdk.appmarket.events.SubscriptionDeactivated;
 import com.appdirect.sdk.appmarket.events.SubscriptionOrder;
 import com.appdirect.sdk.appmarket.events.SubscriptionReactivated;
 import com.appdirect.sdk.appmarket.events.SubscriptionUpcomingInvoice;
+import com.appdirect.sdk.appmarket.events.UserAssignment;
+import com.appdirect.sdk.appmarket.events.UserUnassignment;
 import com.appdirect.sdk.notification.HtmlEmailNotificationService;
 import com.chattypie.handler.SubscriptionCancelHandler;
 import com.chattypie.handler.SubscriptionChangeHandler;
@@ -31,6 +33,8 @@ import com.chattypie.handler.SubscriptionDeactivatedHandler;
 import com.chattypie.handler.SubscriptionOrderHandler;
 import com.chattypie.handler.SubscriptionReactivatedHandler;
 import com.chattypie.handler.SubscriptionUpcomingInvoiceHandler;
+import com.chattypie.handler.UserAssignmentHandler;
+import com.chattypie.handler.UserUnassignmentHandler;
 import com.chattypie.service.appmarket.CompanyAccountService;
 import com.chattypie.service.appmarket.CompanyAccountServiceConfiguration;
 import com.chattypie.service.chattypie.ChattyPieAccessConfiguration;
@@ -39,8 +43,8 @@ import com.chattypie.service.chattypie.greeting.EmailContentGenerator;
 import com.chattypie.service.chattypie.greeting.EmailNotificationService;
 import com.chattypie.service.chattypie.greeting.NotificationService;
 import com.chattypie.util.MapBuilder;
-import com.chattypie.web.StringBackedCredentialsSupplier;
 import com.chattypie.web.ReportGenerationController;
+import com.chattypie.web.StringBackedCredentialsSupplier;
 
 @Configuration
 @Import({
@@ -126,6 +130,16 @@ public class RootConfiguration {
 	@Bean
 	public AppmarketEventHandler<SubscriptionUpcomingInvoice> subscriptionUpcomingInvoiceAppmarketEventHandler() {
 		return new SubscriptionUpcomingInvoiceHandler();
+	}
+
+	@Bean
+	public AppmarketEventHandler<UserAssignment> userAssignmentAppmarketEventHandler() {
+		return new UserAssignmentHandler();
+	}
+
+	@Bean
+	public AppmarketEventHandler<UserUnassignment> userUnassignmentAppmarketEventHandler() {
+		return new UserUnassignmentHandler();
 	}
 
 	@Bean
