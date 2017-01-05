@@ -11,35 +11,44 @@ import static java.nio.file.StandardOpenOption.TRUNCATE_EXISTING;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Optional;
 
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class ManageMysqlInDockerContainer {
-	private static Path containerIdFilePath = Paths.get("target", "mysql-docker-container-id.txt");
+	private static final Path CONTAINER_ID_FILE_PATH = Paths.get("target", "mysql-docker-container-id.txt");
+	public static final Path CONTAINER_MYSQL_PORT_FILE_PATH = Paths.get("target", "mysql-docker-container-port.txt");
 
 	public static void main(String[] args) throws Exception {
-		String existingContainerId = getExistingMysqlDockerContainerId();
-		if (existingContainerId.isEmpty()) {
+		Optional<String> existingContainerId = getExistingMysqlDockerContainerId();
+		if (existingContainerId.isPresent()) {
+			log.info("KILLING EXISTING MYSQL IN DOCKER CONTAINER");
+			MysqlDockerContainer.byId(existingContainerId.get()).kill();
+			delete(CONTAINER_ID_FILE_PATH);
+			delete(CONTAINER_MYSQL_PORT_FILE_PATH);
+		} else {
 			log.info("STARTING MYSQL IN DOCKER CONTAINER");
 			MysqlDockerContainer mysqlDockerContainer = MysqlDockerContainer.newContainer().startAndWait();
 			persistContainerId(mysqlDockerContainer.getContainerId());
-		} else {
-			log.info("KILLING EXISTING MYSQL IN DOCKER CONTAINER");
-			MysqlDockerContainer.byId(existingContainerId).kill();
-			delete(containerIdFilePath);
+			persistContainerMysqlPort(mysqlDockerContainer.getPort());
 		}
+
 		System.exit(0);
 	}
 
-	private static String getExistingMysqlDockerContainerId() throws IOException {
-		if (exists(containerIdFilePath)) {
-			return new String(readAllBytes(containerIdFilePath), UTF_8);
+	private static Optional<String> getExistingMysqlDockerContainerId() throws IOException {
+		if (exists(CONTAINER_ID_FILE_PATH)) {
+			return Optional.of(new String(readAllBytes(CONTAINER_ID_FILE_PATH), UTF_8));
 		}
-		return "";
+		return Optional.empty();
 	}
 
 	private static void persistContainerId(String containerId) throws IOException {
-		write(containerIdFilePath, containerId.getBytes(UTF_8), CREATE, TRUNCATE_EXISTING);
+		write(CONTAINER_ID_FILE_PATH, containerId.getBytes(UTF_8), CREATE, TRUNCATE_EXISTING);
+	}
+
+	private static void persistContainerMysqlPort(int port) throws IOException {
+		write(CONTAINER_MYSQL_PORT_FILE_PATH, Integer.toString(port).getBytes(UTF_8), CREATE, TRUNCATE_EXISTING);
 	}
 }

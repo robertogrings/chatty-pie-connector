@@ -1,7 +1,6 @@
 package com.chattypie.feature;
 
-import static com.chattypie.util.MysqlDockerContainer.newContainer;
-import static com.chattypie.util.TestDatabaseHandle.testUrl;
+import static com.chattypie.util.ITDatabaseUtils.readTestDatabaseUrl;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import org.apache.http.HttpResponse;
@@ -14,7 +13,6 @@ import com.chattypie.ChattyPieConnectorApplication;
 import com.chattypie.support.FakeAppmarket;
 import com.chattypie.support.FakeChattyPie;
 import com.chattypie.support.FakeEmailServer;
-import com.chattypie.util.MysqlDockerContainer;
 import com.chattypie.util.TestDatabaseHandle;
 
 public class CanDispatchSubscriptionOrderIT {
@@ -22,24 +20,22 @@ public class CanDispatchSubscriptionOrderIT {
 	private FakeAppmarket fakeAppmarket;
 	private FakeChattyPie fakeChattyPie;
 	private FakeEmailServer fakeEmailServer;
-	private MysqlDockerContainer mysqlDockerContainer;
 	private ChattyPieConnectorApplication connector;
 	private TestDatabaseHandle db;
 
 	@Before
 	public void setUp() throws Exception {
-		mysqlDockerContainer = newContainer().startAndWait();
-		db = new TestDatabaseHandle(testUrl(mysqlDockerContainer.getHostAndPort()));
 
 		fakeAppmarket = FakeAppmarket.create(localConnectorPort + 1, "very-secure", "password").start();
 		fakeChattyPie = FakeChattyPie.create(localConnectorPort + 2).start();
 		fakeEmailServer = FakeEmailServer.create(localConnectorPort + 3).start();
+		db = new TestDatabaseHandle(readTestDatabaseUrl());
 
 		connector = new ChattyPieConnectorApplication().start(
-				"--server.port=" + localConnectorPort,
-				"--chatty.pie.host=http://localhost:" + (localConnectorPort + 2),
-				"--spring.datasource.url=" + db.getUrl(),
-				"--spring.mail.port=" + (localConnectorPort + 3)
+			"--server.port=" + localConnectorPort,
+			"--chatty.pie.host=http://localhost:" + (localConnectorPort + 2),
+			"--spring.datasource.url=" + db.getDatabaseUrl(),
+			"--spring.mail.port=" + (localConnectorPort + 3)
 		);
 	}
 
@@ -50,7 +46,6 @@ public class CanDispatchSubscriptionOrderIT {
 		fakeChattyPie.stop();
 		fakeAppmarket.stop();
 		db.truncateSchema();
-		mysqlDockerContainer.kill();
 	}
 
 	@Test
