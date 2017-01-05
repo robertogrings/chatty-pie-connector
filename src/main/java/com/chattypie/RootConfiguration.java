@@ -16,7 +16,6 @@ import ch.qos.logback.access.tomcat.LogbackValve;
 import com.appdirect.sdk.ConnectorSdkConfiguration;
 import com.appdirect.sdk.appmarket.AppmarketEventHandler;
 import com.appdirect.sdk.appmarket.DeveloperSpecificAppmarketCredentialsSupplier;
-import com.appdirect.sdk.appmarket.events.AddonSubscriptionOrder;
 import com.appdirect.sdk.appmarket.events.SubscriptionCancel;
 import com.appdirect.sdk.appmarket.events.SubscriptionChange;
 import com.appdirect.sdk.appmarket.events.SubscriptionClosed;
@@ -27,6 +26,7 @@ import com.appdirect.sdk.appmarket.events.SubscriptionUpcomingInvoice;
 import com.appdirect.sdk.appmarket.events.UserAssignment;
 import com.appdirect.sdk.appmarket.events.UserUnassignment;
 import com.appdirect.sdk.notification.HtmlEmailNotificationService;
+import com.chattypie.handler.AddonSubscriptionOrderHandler;
 import com.chattypie.handler.SubscriptionCancelHandler;
 import com.chattypie.handler.SubscriptionChangeHandler;
 import com.chattypie.handler.SubscriptionClosedHandler;
@@ -56,9 +56,6 @@ import com.chattypie.web.StringBackedCredentialsSupplier;
 @EnableAutoConfiguration
 public class RootConfiguration {
 
-	@Value("${chatroom.report.subscriber}")
-	String chatroomReportSubscriberEmail;
-
 	@Bean
 	public DeveloperSpecificAppmarketCredentialsSupplier environmentCredentialsSupplier(@Value("${connector.allowed.credentials}") String allowedCredentials) {
 		return new StringBackedCredentialsSupplier(allowedCredentials, new MapBuilder());
@@ -76,6 +73,7 @@ public class RootConfiguration {
 	}
 
 	@Bean
+	@SuppressWarnings("SpringJavaAutowiringInspection")
 	public HtmlEmailNotificationService emailNotificationService(JavaMailSender javaMailSender) {
 		return new HtmlEmailNotificationService("do-not-reply@appdirect.com", javaMailSender);
 	}
@@ -95,8 +93,8 @@ public class RootConfiguration {
 	}
 
 	@Bean
-	public AppmarketEventHandler<AddonSubscriptionOrder> addonSubscriptionOrderAppmarketEventHandler() {
-		return null;
+	public AddonSubscriptionOrderHandler addonOrderHandler(ChatroomService chatroomService) {
+		return new AddonSubscriptionOrderHandler(chatroomService);
 	}
 
 	@Bean
@@ -161,7 +159,8 @@ public class RootConfiguration {
 	@Bean
 	public ReportGenerationController reportGenerationController(
 		ChatroomService chatroomService,
-		NotificationService notificationService) {
+		NotificationService notificationService,
+		@Value("${chatroom.report.subscriber}") String chatroomReportSubscriberEmail) {
 
 		return new ReportGenerationController(
 			chatroomService,

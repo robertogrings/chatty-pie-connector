@@ -1,20 +1,25 @@
 package com.chattypie.support;
 
+import static com.chattypie.support.FakeServerResponses.methodNotAllowed;
+import static com.chattypie.support.FakeServerResponses.sendJsonResponse;
+import static com.chattypie.support.JsonParser.readJson;
 import static java.lang.String.format;
-import static java.nio.charset.StandardCharsets.UTF_8;
-import static java.util.Objects.requireNonNull;
 
 import java.io.IOException;
-import java.io.OutputStream;
 import java.net.InetSocketAddress;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Consumer;
+import java.util.function.Function;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.chattypie.service.chattypie.chatroom.Chatroom;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.sun.net.httpserver.HttpExchange;
+import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
 
 public class FakeChattyPie {
@@ -22,7 +27,9 @@ public class FakeChattyPie {
 
 	private final HttpServer server;
 	private final List<String> allRequestPaths;
-	private String supportedAccountId;
+	private final List<String> allAccounts;
+	private final List<Chatroom> allRooms;
+	private String nextAccountId;
 
 	public static FakeChattyPie create(int port) throws IOException {
 		HttpServer server = HttpServer.create(new InetSocketAddress(port), 0);
@@ -32,41 +39,13 @@ public class FakeChattyPie {
 	private FakeChattyPie(HttpServer server) {
 		this.server = server;
 		this.allRequestPaths = new ArrayList<>();
+		this.allAccounts = new ArrayList<>();
+		this.allRooms = new ArrayList<>();
 	}
 
 	public FakeChattyPie start() {
-		final Consumer<HttpExchange> createAccount = httpExchange -> sendJsonResponse(httpExchange, 201, accountJson(supportedAccountId));
-		final Consumer<HttpExchange> createRoom = httpExchange -> {
-			String[] pathParts = httpExchange.getRequestURI().getPath().split("/");
-			String requestedAccountId = pathParts[2];
-			if (!requestedAccountId.equals(supportedAccountId)) {
-				sendJsonResponse(httpExchange, 400, format("account %s does not exist", requestedAccountId));
-				return;
-			}
-			sendJsonResponse(httpExchange, 201, roomJson("room-of-" + requestedAccountId, requestedAccountId));
-		};
-
-		server.createContext("/accounts", httpExchange -> {
-			if (supportedAccountId == null) {
-				sendJsonResponse(httpExchange, 500, "{\"message\":\"FakeChattyPie - call setSupportedAccountId() before making calls to it.\"}");
-				return;
-			}
-
-			allRequestPaths.add(httpExchange.getRequestURI().toString());
-
-			String[] pathParts = httpExchange.getRequestURI().getPath().split("/");
-			String lastPathPart = pathParts[pathParts.length - 1];
-			String requestMethod = httpExchange.getRequestMethod();
-			if ("POST".equals(requestMethod)) {
-				if (lastPathPart.equals("accounts")) {
-					createAccount.accept(httpExchange);
-				} else {
-					createRoom.accept(httpExchange);
-				}
-				return;
-			}
-			sendJsonResponse(httpExchange, 405, "Method is not supported!");
-		});
+		server.createContext("/accounts", accountsRoute());
+		server.createContext("/rooms", roomsRoute());
 
 		server.start();
 		return this;
@@ -80,34 +59,134 @@ public class FakeChattyPie {
 		return new ArrayList<>(allRequestPaths);
 	}
 
-	public void setSupportedAccountId(String supportedAccountId) {
-		this.supportedAccountId = supportedAccountId;
+	public void setNextAccountId(String nextAccountId) {
+		this.nextAccountId = nextAccountId;
 	}
 
-	private void sendJsonResponse(HttpExchange t, int statusCode, String response) {
-		sendJsonResponse(t, statusCode, response.getBytes(UTF_8));
+	public void addOrUpdateRoom(Chatroom roomToAdd) {
+		tryGetExistingRoom(roomToAdd.getId()).ifPresent(allRooms::remove);
+		allRooms.add(roomToAdd);
 	}
 
-	private void sendJsonResponse(HttpExchange t, int statusCode, byte[] response) {
-		try {
-			t.getResponseHeaders().add("Content-Type", "application/json");
-			t.sendResponseHeaders(statusCode, response.length);
+	public Chatroom getExistingRoom(String roomId) {
+		return tryGetExistingRoom(roomId).orElseThrow(() -> new IllegalArgumentException("room #" + roomId + " does not exist on this fake chatty-pie"));
+	}
 
-			OutputStream os = t.getResponseBody();
-			os.write(response);
+	private Optional<Chatroom> tryGetExistingRoom(String roomId) {
+		return allRooms.stream().filter(r -> r.getId().equals(roomId)).findFirst();
+	}
 
-			os.close();
-		} catch (Exception e) {
-			LOG.error("FakeChattyPie - exception occurred when response", e);
-		}
+	private HttpHandler accountsRoute() {
+		final Consumer<HttpExchange> createAccount = httpExchange -> {
+			if (nextAccountId == null) {
+				sendJsonResponse(httpExchange, 500, "{\"message\":\"FakeChattyPie - call setNextAccountId() before making calls to it.\"}");
+				return;
+			}
+
+			allAccounts.add(nextAccountId);
+			sendJsonResponse(httpExchange, 201, accountJson(nextAccountId));
+			nextAccountId = null;
+		};
+
+		final Consumer<HttpExchange> createRoom = httpExchange -> {
+			String[] pathParts = httpExchange.getRequestURI().getPath().split("/");
+			String requestedAccountId = pathParts[2];
+			if (!allAccounts.contains(requestedAccountId)) {
+				sendJsonResponse(httpExchange, 400, format("account %s does not exist", requestedAccountId));
+				return;
+			}
+			String roomId = "room-of-" + requestedAccountId;
+			sendJsonResponse(httpExchange, 201, standardRoomJson(roomId, requestedAccountId));
+			addOrUpdateRoom(newStandardRoom(requestedAccountId, roomId));
+		};
+
+		return logAndHandleRequest(httpExchange -> {
+			String[] pathParts = httpExchange.getRequestURI().getPath().split("/");
+			String lastPathPart = pathParts[pathParts.length - 1];
+			String requestMethod = httpExchange.getRequestMethod();
+			if ("POST".equals(requestMethod)) {
+				if (lastPathPart.equals("accounts")) {
+					createAccount.accept(httpExchange);
+				} else {
+					createRoom.accept(httpExchange);
+				}
+				return true;
+			}
+			return false;
+		});
+	}
+
+	private HttpHandler roomsRoute() {
+		Consumer<HttpExchange> updateRoom = httpExchange -> {
+			String[] pathParts = httpExchange.getRequestURI().getPath().split("/");
+			String requestedRoomId = pathParts[2];
+			Chatroom requestedRoom = tryGetExistingRoom(requestedRoomId).orElse(null);
+			if (requestedRoom == null) {
+				sendJsonResponse(httpExchange, 400, format("room %s does not exist", requestedRoomId));
+				return;
+			}
+
+			Chatroom.ChatroomBuilder updatedRoomBuilder = chatroomBuilderFrom(requestedRoom);
+			JsonNode jsonRequestBody = readJson(httpExchange.getRequestBody());
+
+			if (jsonRequestBody.get("status") != null) {
+				updatedRoomBuilder.status(jsonRequestBody.get("status").asText());
+			}
+
+			if (jsonRequestBody.get("type") != null) {
+				updatedRoomBuilder.type(jsonRequestBody.get("type").asText());
+			}
+
+			if (jsonRequestBody.get("full_history_enabled") != null) {
+				updatedRoomBuilder.fullHistoryEnabled(jsonRequestBody.get("full_history_enabled").asBoolean());
+			}
+
+			addOrUpdateRoom(updatedRoomBuilder.build());
+			sendJsonResponse(httpExchange, 204, "");
+		};
+
+		return logAndHandleRequest(httpExchange -> {
+			if ("PUT".equals(httpExchange.getRequestMethod())) {
+				updateRoom.accept(httpExchange);
+				return true;
+			}
+			return false;
+		});
+	}
+
+	private HttpHandler logAndHandleRequest(Function<HttpExchange, Boolean> requestHandler) {
+		return httpExchange -> {
+			logRequest(httpExchange);
+
+			if (!requestHandler.apply(httpExchange)) {
+				methodNotAllowed(httpExchange);
+			}
+		};
 	}
 
 	private String accountJson(String accountId) {
 		return format("{\"id\": \"%s\", \"max_allowed_rooms\": 100}", accountId);
 	}
 
-	private String roomJson(String roomId, String accountId) {
-		String roomName = "some-room-name";
-		return format("{\"status\": \"active\", \"type\": \"standard\", \"id\": \"%s\", \"name\": \"%s\", \"account_id\": \"%s\"}", roomId, roomName, accountId);
+	private String standardRoomJson(String roomId, String accountId) {
+		return format("{\"status\": \"active\", \"type\": \"standard\", \"id\": \"%s\", \"name\": \"some-room-name\", \"account_id\": \"%s\"}", roomId, accountId);
+	}
+
+	private Chatroom.ChatroomBuilder chatroomBuilderFrom(Chatroom originalRoom) {
+		return Chatroom.builder()
+				.accountId(originalRoom.getAccountId())
+				.id(originalRoom.getId())
+				.name(originalRoom.getName())
+				.status(originalRoom.getStatus())
+				.type(originalRoom.getType())
+				.fullHistoryEnabled(originalRoom.isFullHistoryEnabled());
+	}
+
+	private Chatroom newStandardRoom(String accountId, String roomId) {
+		return Chatroom.builder().id(roomId).name("some-room-name").type("standard").status("active").accountId(accountId).build();
+	}
+
+	private boolean logRequest(HttpExchange httpExchange) {
+		return allRequestPaths.add(httpExchange.getRequestMethod() + " " + httpExchange.getRequestURI().toString());
 	}
 }

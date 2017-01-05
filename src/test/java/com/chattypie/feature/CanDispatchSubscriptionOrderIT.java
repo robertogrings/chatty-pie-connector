@@ -50,7 +50,7 @@ public class CanDispatchSubscriptionOrderIT {
 
 	@Test
 	public void subscriptionOrderCreatesAccountAndRoomOnChattyPieAndSendsEmail() throws Exception {
-		fakeChattyPie.setSupportedAccountId("the-account-id");
+		fakeChattyPie.setNextAccountId("the-account-id");
 
 		HttpResponse response = fakeAppmarket.sendEventTo(connectorEventEndpoint(), "/v1/events/order");
 
@@ -63,8 +63,8 @@ public class CanDispatchSubscriptionOrderIT {
 		assertThat(fakeAppmarket.allRequestPaths()).last().isEqualTo("/api/integration/v1/events/order/result");
 		assertThat(fakeAppmarket.lastRequestBody()).isEqualTo("{\"success\":true,\"message\":\"Successfully placed order for account: accountId = the-account-id, id = 6c9832df-a5f2-40dc-9fe6-823ac2c4f143\",\"accountIdentifier\":\"room-of-the-account-id\"}");
 
-		assertThat(fakeChattyPie.allRequestPaths()).first().isEqualTo("/accounts");
-		assertThat(fakeChattyPie.allRequestPaths()).last().isEqualTo("/accounts/the-account-id/rooms");
+		assertThat(fakeChattyPie.allRequestPaths()).first().isEqualTo("POST /accounts");
+		assertThat(fakeChattyPie.allRequestPaths()).last().isEqualTo("POST /accounts/the-account-id/rooms");
 
 		assertThat(fakeEmailServer.lastMessageSubject()).isEqualTo("Welcome to Chatty Pie!");
 	}

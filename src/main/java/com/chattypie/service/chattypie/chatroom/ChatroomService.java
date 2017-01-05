@@ -49,6 +49,13 @@ public class ChatroomService {
 		);
 	}
 
+	public void enableUnlimitedHistory(String idOfChatroom) {
+		restTemplate.put(
+				format(CHATROOM_RESOURCE_ENDPOINT_TEMPLATE, chattyPieHost, idOfChatroom),
+				"{\"full_history_enabled\":\"true\"}"
+		);
+	}
+
 	public List<ChatroomCreationRecord> chatroomsCreatedOverTheLastDay() {
 		return chatroomDao.readCreatedSince(now().minusDays(1));
 	}

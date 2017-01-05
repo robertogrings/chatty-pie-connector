@@ -7,6 +7,7 @@
     </appender>
 
     <logger name="com.chattypie.util.MysqlDockerContainer" level="DEBUG"/>
+    <logger name="com.chattypie.support.FakeServerResponses" level="DEBUG"/>
 
     <root level="WARN">
         <appender-ref ref="STDOUT"/>
