@@ -40,7 +40,10 @@ public class SubscriptionOrderHandlerTest {
 
 	@Before
 	public void setUp() throws Exception {
-		testedSubscriptionOrderHandler = new SubscriptionOrderHandler(mockCompanyAccountService, mockChatroomService, mockNotificationService);
+		testedSubscriptionOrderHandler = new SubscriptionOrderHandler(
+				mockCompanyAccountService,
+				mockChatroomService,
+				mockNotificationService);
 	}
 
 	@Test
@@ -48,7 +51,7 @@ public class SubscriptionOrderHandlerTest {
 		//Given
 		String expectedNewChatroomName = "chatroomName";
 		String testCompanyUuid = "testUuid";
-		SubscriptionOrder testEvent = generateSubscriptionOrderEvent(expectedNewChatroomName, testCompanyUuid);
+		SubscriptionOrder testEvent = newOrderEvent(expectedNewChatroomName, testCompanyUuid);
 
 		when(mockCompanyAccountService.findExistingCompanyAccountById(testCompanyUuid))
 			.thenReturn(Optional.empty());
@@ -59,7 +62,7 @@ public class SubscriptionOrderHandlerTest {
 
 		String newChatroomId = "chatroomId";
 		when(mockChatroomService.createChatroomForAccount(expectedAccountId, expectedNewChatroomName))
-			.thenReturn(new Chatroom(newChatroomId, expectedNewChatroomName, expectedAccountId));
+			.thenReturn(Chatroom.builder().id(newChatroomId).name(expectedNewChatroomName).accountId(expectedAccountId).build());
 
 		//When
 		APIResult result = testedSubscriptionOrderHandler.handle(testEvent);
@@ -78,15 +81,15 @@ public class SubscriptionOrderHandlerTest {
 		//Given
 		String expectedNewChatroomName = "chatroomName";
 		String testCompanyUuid = "testUuid";
-		SubscriptionOrder testEvent = generateSubscriptionOrderEvent(expectedNewChatroomName, testCompanyUuid);
+		SubscriptionOrder testEvent = newOrderEvent(expectedNewChatroomName, testCompanyUuid);
 
-		String exisingAccountId = "existingAccountId";
+		String existingAccountId = "existingAccountId";
 		when(mockCompanyAccountService.findExistingCompanyAccountById(testCompanyUuid))
-			.thenReturn(Optional.of(new CompanyAccount(exisingAccountId, testCompanyUuid)));
+			.thenReturn(Optional.of(new CompanyAccount(existingAccountId, testCompanyUuid)));
 
 		String newChatroomId = "chatroomId";
-		when(mockChatroomService.createChatroomForAccount(exisingAccountId, expectedNewChatroomName))
-			.thenReturn(new Chatroom(newChatroomId, expectedNewChatroomName, exisingAccountId));
+		when(mockChatroomService.createChatroomForAccount(existingAccountId, expectedNewChatroomName))
+			.thenReturn(Chatroom.builder().id(newChatroomId).name(expectedNewChatroomName).accountId(existingAccountId).build());
 
 		//When
 		APIResult result = testedSubscriptionOrderHandler.handle(testEvent);
@@ -96,23 +99,23 @@ public class SubscriptionOrderHandlerTest {
 			.as("The result is successful")
 			.isTrue();
 		verify(mockChatroomService)
-			.createChatroomForAccount(eq(exisingAccountId), eq(expectedNewChatroomName));
+			.createChatroomForAccount(eq(existingAccountId), eq(expectedNewChatroomName));
 		assertThat(result.getAccountIdentifier()).isEqualTo(newChatroomId);
 	}
 
-	private SubscriptionOrder generateSubscriptionOrderEvent(String expectedNewChatroomName, String testCompanyUuid) {
+	private SubscriptionOrder newOrderEvent(String chatroomName, String companyUuid) {
 		return new SubscriptionOrder(
-			"some-key",
-			null,
-			null,
-			config("chatroomName", expectedNewChatroomName),
-			CompanyInfo.builder()
-				.uuid(testCompanyUuid)
-				.build(),
-			null,
-			null,
-			null,
-			null
+				"some-key",
+				null,
+				null,
+				config("chatroomName", chatroomName),
+				CompanyInfo.builder()
+						.uuid(companyUuid)
+						.build(),
+				null,
+				null,
+				null,
+				null
 		);
 	}
 

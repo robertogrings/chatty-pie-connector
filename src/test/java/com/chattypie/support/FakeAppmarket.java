@@ -2,12 +2,13 @@ package com.chattypie.support;
 
 import static com.chattypie.support.ContentOf.resourceAsString;
 import static com.chattypie.support.ContentOf.streamAsString;
+import static com.chattypie.support.FakeServerResponses.sendJsonResponse;
+import static com.chattypie.support.FakeServerResponses.sendResponse;
 import static com.chattypie.support.HttpClientHelper.anAppmarketHttpClient;
 import static com.chattypie.support.HttpClientHelper.get;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
 import java.io.IOException;
-import java.io.OutputStream;
 import java.net.InetSocketAddress;
 import java.net.URI;
 import java.util.ArrayList;
@@ -179,23 +180,14 @@ public class FakeAppmarket {
 				}
 				lastRequestBody = streamAsString(t.getRequestBody());
 
-				t.getResponseHeaders().add("Content-Type", "application/json");
 				response = buildJsonResponse(t.getRequestURI());
 			} catch (Exception e) {
 				backgroundThreadException = e;
 			} finally {
-				sendResponse(t, 200, response);
+				sendJsonResponse(t, 200, response);
 			}
 		}
 
 		abstract byte[] buildJsonResponse(URI requestUri) throws IOException;
-
-		private void sendResponse(HttpExchange t, int statusCode, byte[] response) throws IOException {
-			t.sendResponseHeaders(statusCode, response.length);
-
-			OutputStream os = t.getResponseBody();
-			os.write(response);
-			os.close();
-		}
 	}
 }

@@ -1,4 +1,4 @@
-package com.chattypie.service.chatroom;
+package com.chattypie.service.chattypie.chatroom;
 
 import static java.lang.String.format;
 import static java.time.ZonedDateTime.now;
@@ -19,9 +19,6 @@ import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.web.client.RestTemplate;
 
 import com.chattypie.persistence.model.ChatroomCreationRecord;
-import com.chattypie.service.chattypie.chatroom.Chatroom;
-import com.chattypie.service.chattypie.chatroom.ChatroomDao;
-import com.chattypie.service.chattypie.chatroom.ChatroomService;
 import com.google.common.collect.Lists;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -76,7 +73,7 @@ public class ChatroomServiceTest {
 		String testChatroomName = "testName";
 		String testAccountId = "accountId";
 		String expectedChatroomId = "expectedChatroomId";
-		Chatroom expectedCompany = new Chatroom(expectedChatroomId, testChatroomName, testAccountId);
+		Chatroom expectedCompany = Chatroom.builder().id(expectedChatroomId).name(testChatroomName).accountId(testAccountId).build();
 		when(
 			mockRestTemplate.postForObject(
 				format("%s/accounts/%s/rooms", mockChattyPieHost, testAccountId),
@@ -106,6 +103,16 @@ public class ChatroomServiceTest {
 		//Then
 		verify(mockRestTemplate)
 			.delete(eq(format("%s/rooms/%s", mockChattyPieHost, idOfChatroomToRemove)));
+	}
+
+	@Test
+	public void testEnableUnlimitedHistory() {
+		testedChatroomService.enableUnlimitedHistory("some-chatroom-id");
+
+		verify(mockRestTemplate).put(
+				eq(format("%s/rooms/some-chatroom-id", mockChattyPieHost)),
+				eq("{\"full_history_enabled\":\"true\"}")
+		);
 	}
 
 	@Test
