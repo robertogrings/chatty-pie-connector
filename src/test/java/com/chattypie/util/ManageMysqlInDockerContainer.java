@@ -18,7 +18,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class ManageMysqlInDockerContainer {
 	private static final Path CONTAINER_ID_FILE_PATH = Paths.get("target", "mysql-docker-container-id.txt");
-	public static final Path CONTAINER_MYSQL_PORT_FILE_PATH = Paths.get("target", "mysql-docker-container-port.txt");
+	public static final Path CONTAINER_MYSQL_HOST_AND_PORT_FILE_PATH = Paths.get("target", "mysql-docker-container-port.txt");
 
 	public static void main(String[] args) throws Exception {
 		Optional<String> existingContainerId = getExistingMysqlDockerContainerId();
@@ -26,12 +26,12 @@ public class ManageMysqlInDockerContainer {
 			log.info("KILLING EXISTING MYSQL IN DOCKER CONTAINER");
 			MysqlDockerContainer.byId(existingContainerId.get()).kill();
 			delete(CONTAINER_ID_FILE_PATH);
-			delete(CONTAINER_MYSQL_PORT_FILE_PATH);
+			delete(CONTAINER_MYSQL_HOST_AND_PORT_FILE_PATH);
 		} else {
 			log.info("STARTING MYSQL IN DOCKER CONTAINER");
 			MysqlDockerContainer mysqlDockerContainer = MysqlDockerContainer.newContainer().startAndWait();
 			persistContainerId(mysqlDockerContainer.getContainerId());
-			persistContainerMysqlPort(mysqlDockerContainer.getPort());
+			persistContainerMysqlHostAndPort(mysqlDockerContainer);
 		}
 
 		System.exit(0);
@@ -48,7 +48,12 @@ public class ManageMysqlInDockerContainer {
 		write(CONTAINER_ID_FILE_PATH, containerId.getBytes(UTF_8), CREATE, TRUNCATE_EXISTING);
 	}
 
-	private static void persistContainerMysqlPort(int port) throws IOException {
-		write(CONTAINER_MYSQL_PORT_FILE_PATH, Integer.toString(port).getBytes(UTF_8), CREATE, TRUNCATE_EXISTING);
+	private static void persistContainerMysqlHostAndPort(MysqlDockerContainer container) throws IOException {
+		write(
+			CONTAINER_MYSQL_HOST_AND_PORT_FILE_PATH,
+			container.getHostAndPort().getBytes(UTF_8), 
+			CREATE, 
+			TRUNCATE_EXISTING
+		);
 	}
 }
