@@ -18,20 +18,17 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import com.chattypie.datasource.DatasourceConfiguration;
 import com.chattypie.persistence.model.ChatroomCreationRecord;
-import com.chattypie.util.LocalDockerMysqlDatasourceConfiguration;
+import com.chattypie.util.ITTestDataSourceConfiguration;
 import com.chattypie.util.TestDatabaseHandle;
-import com.mysql.jdbc.jdbc2.optional.MysqlDataSource;
 import com.querydsl.sql.SQLQueryFactory;
 
 @RunWith(SpringRunner.class)
-@ContextConfiguration(classes = {DatasourceConfiguration.class, LocalDockerMysqlDatasourceConfiguration.class})
+@ContextConfiguration(classes = {DatasourceConfiguration.class, ITTestDataSourceConfiguration.class})
 public class ChatroomDaoIT {
 	@Autowired
 	private SQLQueryFactory queryFactory;
 
 	@Autowired
-	private MysqlDataSource dataSource;
-
 	private TestDatabaseHandle testDb;
 
 	private ChatroomDao testedChatroomDao;
@@ -39,7 +36,6 @@ public class ChatroomDaoIT {
 	@Before
 	public void setUp() throws Exception {
 		testedChatroomDao = new ChatroomDao(queryFactory);
-		testDb = new TestDatabaseHandle(dataSource.getUrl());
 	}
 
 	@After

@@ -32,7 +32,7 @@ public class MysqlDockerContainer {
 		return new MysqlDockerContainer();
 	}
 
-	public static MysqlDockerContainer byId(String existingContainerId) throws NoSuchFieldException {
+	static MysqlDockerContainer byId(String existingContainerId) throws NoSuchFieldException {
 		MysqlDockerContainer existingContainer = newContainer();
 		setContainerIdOnHost(existingContainer.mysqlHost, existingContainerId);
 		return existingContainer;
@@ -69,7 +69,7 @@ public class MysqlDockerContainer {
 		return format("%s:%d", getHostName(), getPort());
 	}
 
-	public String getContainerId() {
+	String getContainerId() {
 		return ((DockerHost) mysqlHost).getDockerDriver().getContainerId();
 	}
 

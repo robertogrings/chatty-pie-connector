@@ -15,19 +15,16 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import com.chattypie.datasource.DatasourceConfiguration;
 import com.chattypie.persistence.model.CompanyAccount;
-import com.chattypie.util.LocalDockerMysqlDatasourceConfiguration;
+import com.chattypie.util.ITDatabaseUtils;
+import com.chattypie.util.ITTestDataSourceConfiguration;
 import com.chattypie.util.TestDatabaseHandle;
-import com.mysql.jdbc.jdbc2.optional.MysqlDataSource;
 import com.querydsl.sql.SQLQueryFactory;
 
 @RunWith(SpringRunner.class)
-@ContextConfiguration(classes = {DatasourceConfiguration.class, LocalDockerMysqlDatasourceConfiguration.class})
+@ContextConfiguration(classes = {DatasourceConfiguration.class, ITTestDataSourceConfiguration.class})
 public class CompanyAccountDaoIT {
 	@Autowired
 	private SQLQueryFactory queryFactory;
-
-	@Autowired
-	private MysqlDataSource dataSource;
 
 	private TestDatabaseHandle testDatabaseHandle;
 
@@ -35,7 +32,7 @@ public class CompanyAccountDaoIT {
 
 	@Before
 	public void setUp() throws Exception {
-		testDatabaseHandle = new TestDatabaseHandle(dataSource.getUrl());
+		testDatabaseHandle = new TestDatabaseHandle(ITDatabaseUtils.readTestDatabaseUrl());
 		testedDao = new CompanyAccountDao(queryFactory);
 	}
 
