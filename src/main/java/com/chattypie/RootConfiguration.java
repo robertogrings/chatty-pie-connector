@@ -16,6 +16,8 @@ import ch.qos.logback.access.tomcat.LogbackValve;
 import com.appdirect.sdk.ConnectorSdkConfiguration;
 import com.appdirect.sdk.appmarket.AppmarketEventHandler;
 import com.appdirect.sdk.appmarket.DeveloperSpecificAppmarketCredentialsSupplier;
+import com.appdirect.sdk.appmarket.events.AddonSubscriptionOrder;
+import com.appdirect.sdk.appmarket.events.EditionCodeBasedAddonDetector;
 import com.appdirect.sdk.appmarket.events.SubscriptionCancel;
 import com.appdirect.sdk.appmarket.events.SubscriptionChange;
 import com.appdirect.sdk.appmarket.events.SubscriptionClosed;
@@ -91,6 +93,16 @@ public class RootConfiguration {
 			contentGenerator,
 			emailNotificationService
 		);
+	}
+
+	@Bean
+	public EditionCodeBasedAddonDetector addonDetector() {
+		return new EditionCodeBasedAddonDetector();
+	}
+
+	@Bean
+	public AppmarketEventHandler<AddonSubscriptionOrder> addonSubscriptionOrderAppmarketEventHandler() {
+		return null;
 	}
 
 	@Bean
