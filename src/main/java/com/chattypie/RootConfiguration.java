@@ -26,6 +26,7 @@ import com.appdirect.sdk.appmarket.events.SubscriptionUpcomingInvoice;
 import com.appdirect.sdk.appmarket.events.UserAssignment;
 import com.appdirect.sdk.appmarket.events.UserUnassignment;
 import com.appdirect.sdk.notification.HtmlEmailNotificationService;
+import com.chattypie.handler.AddonSubscriptionCancelHandler;
 import com.chattypie.handler.AddonSubscriptionOrderHandler;
 import com.chattypie.handler.SubscriptionCancelHandler;
 import com.chattypie.handler.SubscriptionChangeHandler;
@@ -95,6 +96,11 @@ public class RootConfiguration {
 	@Bean
 	public AddonSubscriptionOrderHandler addonOrderHandler(ChatroomService chatroomService) {
 		return new AddonSubscriptionOrderHandler(chatroomService);
+	}
+
+	@Bean
+	public AddonSubscriptionCancelHandler addonCancelHandler() {
+		return new AddonSubscriptionCancelHandler();
 	}
 
 	@Bean
