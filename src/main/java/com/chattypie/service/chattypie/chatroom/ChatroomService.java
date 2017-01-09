@@ -51,8 +51,15 @@ public class ChatroomService {
 
 	public void enableUnlimitedHistory(String idOfChatroom) {
 		restTemplate.put(
-				format(CHATROOM_RESOURCE_ENDPOINT_TEMPLATE, chattyPieHost, idOfChatroom),
-				"{\"full_history_enabled\":\"true\"}"
+			format(CHATROOM_RESOURCE_ENDPOINT_TEMPLATE, chattyPieHost, idOfChatroom),
+			"{\"full_history_enabled\":\"true\"}"
+		);
+	}
+
+	public void disableUnlimitedHistory(String idOfChatroom) {
+		restTemplate.put(
+			format(CHATROOM_RESOURCE_ENDPOINT_TEMPLATE, chattyPieHost, idOfChatroom),
+			"{\"full_history_enabled\":\"false\"}"
 		);
 	}
 

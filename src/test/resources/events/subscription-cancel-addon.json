@@ -1,0 +1,42 @@
+{
+  "type": "SUBSCRIPTION_CANCEL",
+  "marketplace": {
+    "partner": "some-partner",
+    "baseUrl": "{{fake-appmarket-url}}"
+  },
+  "creator": {
+    "uuid": "dac5f67b-7da7-4603-bb1b-3fd507509081",
+    "openId": "https://{{fake-appmarket-url}}/openid/id/dac5f67b-7da7-4603-bb1b-3fd507509081",
+    "email": "gabriel.x@gmail.com",
+    "firstName": "Gabriel",
+    "lastName": "SomeLastName",
+    "language": "en",
+    "address": {
+      "salutation": null,
+      "firstName": null,
+      "lastName": null,
+      "fullName": null,
+      "companyName": null,
+      "phone": null,
+      "phoneExtension": null,
+      "fax": null,
+      "faxExtension": null,
+      "street1": null,
+      "street2": null,
+      "city": null,
+      "state": null,
+      "zip": null,
+      "country": null,
+      "pobox": null,
+      "pozip": null
+    },
+    "attributes": null
+  },
+  "payload": {
+    "account": {
+      "accountIdentifier": "9d6fca98-aa94-462b-85fa-118804ad3fe3",
+      "status": "ACTIVE",
+      "parentAccountIdentifier": "room-of-the-account"
+    }
+  }
+}

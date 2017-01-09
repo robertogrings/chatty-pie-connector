@@ -19,6 +19,6 @@ public class SubscriptionCancelHandler implements AppmarketEventHandler<Subscrip
 	@Override
 	public APIResult handle(SubscriptionCancel event) {
 		chatroomService.suspendChatroom(event.getAccountIdentifier());
-		return success("Account  cancelled successfully");
+		return success("Account cancelled successfully");
 	}
 }

@@ -110,9 +110,25 @@ public class ChatroomServiceTest {
 		testedChatroomService.enableUnlimitedHistory("some-chatroom-id");
 
 		verify(mockRestTemplate).put(
-				eq(format("%s/rooms/some-chatroom-id", mockChattyPieHost)),
-				eq("{\"full_history_enabled\":\"true\"}")
+			eq(format("%s/rooms/some-chatroom-id", mockChattyPieHost)),
+			eq("{\"full_history_enabled\":\"true\"}")
 		);
+	}
+
+	@Test
+	public void testDisableUnlimitedHistory() throws Exception {
+		//Given
+		String testChatroomId = "testChatroomId";
+
+		//When
+		testedChatroomService.disableUnlimitedHistory(testChatroomId);
+
+		//Then
+		verify(mockRestTemplate).put(
+			eq(format("%s/rooms/%s", mockChattyPieHost, testChatroomId)),
+			eq("{\"full_history_enabled\":\"false\"}")
+		);
+
 	}
 
 	@Test
