@@ -16,6 +16,7 @@ import ch.qos.logback.access.tomcat.LogbackValve;
 import com.appdirect.sdk.ConnectorSdkConfiguration;
 import com.appdirect.sdk.appmarket.AppmarketEventHandler;
 import com.appdirect.sdk.appmarket.DeveloperSpecificAppmarketCredentialsSupplier;
+import com.appdirect.sdk.appmarket.events.AddonSubscriptionCancel;
 import com.appdirect.sdk.appmarket.events.SubscriptionCancel;
 import com.appdirect.sdk.appmarket.events.SubscriptionChange;
 import com.appdirect.sdk.appmarket.events.SubscriptionClosed;
@@ -99,8 +100,8 @@ public class RootConfiguration {
 	}
 
 	@Bean
-	public AddonSubscriptionCancelHandler addonCancelHandler() {
-		return new AddonSubscriptionCancelHandler();
+	public AppmarketEventHandler<AddonSubscriptionCancel> addonSubscriptionCancelAppmarketEventHandler(ChatroomService chatroomService) {
+		return new AddonSubscriptionCancelHandler(chatroomService);
 	}
 
 	@Bean
