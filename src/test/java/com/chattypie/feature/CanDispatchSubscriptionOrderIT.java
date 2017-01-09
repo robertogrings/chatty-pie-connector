@@ -1,49 +1,61 @@
 package com.chattypie.feature;
 
 import static com.chattypie.util.ITDatabaseUtils.readTestDatabaseUrl;
+import static java.lang.System.setProperty;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
+import static org.springframework.util.SocketUtils.findAvailableTcpPort;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.util.EntityUtils;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.embedded.LocalServerPort;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringRunner;
 
-import com.chattypie.ChattyPieConnectorApplication;
-import com.chattypie.support.FakeAppmarket;
-import com.chattypie.support.FakeChattyPie;
-import com.chattypie.support.FakeEmailServer;
+import com.chattypie.RootConfiguration;
+import com.chattypie.support.fake.FakeAppmarket;
+import com.chattypie.support.fake.FakeChattyPie;
+import com.chattypie.support.fake.FakeEmailServer;
+import com.chattypie.support.fake.WithFakeChattyPie;
+import com.chattypie.support.fake.WithFakeEmailServer;
 import com.chattypie.util.TestDatabaseHandle;
 
+@RunWith(SpringRunner.class)
+@SpringBootTest(classes = RootConfiguration.class, webEnvironment = RANDOM_PORT)
+@ContextConfiguration(initializers = {WithFakeChattyPie.class, WithFakeEmailServer.class})
 public class CanDispatchSubscriptionOrderIT {
-	private int localConnectorPort = 3453;
-	private FakeAppmarket fakeAppmarket;
+	private static TestDatabaseHandle db;
+
+	@LocalServerPort
+	private int localConnectorPort;
+
+	@Autowired
 	private FakeChattyPie fakeChattyPie;
+	@Autowired
 	private FakeEmailServer fakeEmailServer;
-	private ChattyPieConnectorApplication connector;
-	private TestDatabaseHandle db;
+	private FakeAppmarket fakeAppmarket;
+
+	@BeforeClass
+	public static void beforeClass() throws Exception {
+		db = new TestDatabaseHandle(readTestDatabaseUrl());
+		setProperty("spring.datasource.url", db.getDatabaseUrl());
+	}
 
 	@Before
 	public void setUp() throws Exception {
-
-		fakeAppmarket = FakeAppmarket.create(localConnectorPort + 1, "very-secure", "password").start();
-		fakeChattyPie = FakeChattyPie.create(localConnectorPort + 2).start();
-		fakeEmailServer = FakeEmailServer.create(localConnectorPort + 3).start();
-		db = new TestDatabaseHandle(readTestDatabaseUrl());
-
-		connector = new ChattyPieConnectorApplication().start(
-			"--server.port=" + localConnectorPort,
-			"--chatty.pie.host=http://localhost:" + (localConnectorPort + 2),
-			"--spring.datasource.url=" + db.getDatabaseUrl(),
-			"--spring.mail.port=" + (localConnectorPort + 3)
-		);
+		fakeChattyPie.reset();
+		fakeAppmarket = FakeAppmarket.create(findAvailableTcpPort(), "very-secure", "password").start();
 	}
 
 	@After
-	public void stop() throws Exception {
-		connector.stop();
-		fakeEmailServer.stop();
-		fakeChattyPie.stop();
+	public void stopAppMarketAndTruncateDb() throws Exception {
 		fakeAppmarket.stop();
 		db.truncateSchema();
 	}

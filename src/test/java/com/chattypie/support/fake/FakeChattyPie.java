@@ -1,20 +1,20 @@
-package com.chattypie.support;
+package com.chattypie.support.fake;
 
-import static com.chattypie.support.FakeServerResponses.methodNotAllowed;
-import static com.chattypie.support.FakeServerResponses.sendJsonResponse;
 import static com.chattypie.support.JsonParser.readJson;
 import static java.lang.String.format;
 
-import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.DisposableBean;
 
 import com.chattypie.service.chattypie.chatroom.Chatroom;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -22,18 +22,17 @@ import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
 
-public class FakeChattyPie {
-	private final static Logger LOG = LoggerFactory.getLogger(FakeChattyPie.class);
-
+public class FakeChattyPie implements DisposableBean {
 	private final HttpServer server;
 	private final List<String> allRequestPaths;
 	private final List<String> allAccounts;
 	private final List<Chatroom> allRooms;
 	private String nextAccountId;
 
-	public static FakeChattyPie create(int port) throws IOException {
-		HttpServer server = HttpServer.create(new InetSocketAddress(port), 0);
-		return new FakeChattyPie(server);
+	static FakeChattyPie create(int port) throws ExecutionException, InterruptedException {
+		ExecutorService executor = Executors.newFixedThreadPool(1);
+		Future<HttpServer> futureServer = executor.submit(() -> HttpServer.create(new InetSocketAddress(port), 10));
+		return new FakeChattyPie(futureServer.get());
 	}
 
 	private FakeChattyPie(HttpServer server) {
@@ -43,7 +42,7 @@ public class FakeChattyPie {
 		this.allRooms = new ArrayList<>();
 	}
 
-	public FakeChattyPie start() {
+	FakeChattyPie start() {
 		server.createContext("/accounts", accountsRoute());
 		server.createContext("/rooms", roomsRoute());
 
@@ -51,8 +50,19 @@ public class FakeChattyPie {
 		return this;
 	}
 
-	public void stop() {
+	@Override
+	public void destroy() throws Exception {
 		server.stop(0);
+	}
+
+	public void reset() {
+		this.allRequestPaths.clear();
+		this.allAccounts.clear();
+		this.allRooms.clear();
+	}
+
+	int getPort() {
+		return server.getAddress().getPort();
 	}
 
 	public List<String> allRequestPaths() {
@@ -79,12 +89,12 @@ public class FakeChattyPie {
 	private HttpHandler accountsRoute() {
 		final Consumer<HttpExchange> createAccount = httpExchange -> {
 			if (nextAccountId == null) {
-				sendJsonResponse(httpExchange, 500, "{\"message\":\"FakeChattyPie - call setNextAccountId() before making calls to it.\"}");
+				FakeServerResponses.sendJsonResponse(httpExchange, 500, "{\"message\":\"FakeChattyPie - call setNextAccountId() before making calls to it.\"}");
 				return;
 			}
 
 			allAccounts.add(nextAccountId);
-			sendJsonResponse(httpExchange, 201, accountJson(nextAccountId));
+			FakeServerResponses.sendJsonResponse(httpExchange, 201, accountJson(nextAccountId));
 			nextAccountId = null;
 		};
 
@@ -92,11 +102,11 @@ public class FakeChattyPie {
 			String[] pathParts = httpExchange.getRequestURI().getPath().split("/");
 			String requestedAccountId = pathParts[2];
 			if (!allAccounts.contains(requestedAccountId)) {
-				sendJsonResponse(httpExchange, 400, format("account %s does not exist", requestedAccountId));
+				FakeServerResponses.sendJsonResponse(httpExchange, 400, format("account %s does not exist", requestedAccountId));
 				return;
 			}
 			String roomId = "room-of-" + requestedAccountId;
-			sendJsonResponse(httpExchange, 201, standardRoomJson(roomId, requestedAccountId));
+			FakeServerResponses.sendJsonResponse(httpExchange, 201, standardRoomJson(roomId, requestedAccountId));
 			addOrUpdateRoom(newStandardRoom(requestedAccountId, roomId));
 		};
 
@@ -122,7 +132,7 @@ public class FakeChattyPie {
 			String requestedRoomId = pathParts[2];
 			Chatroom requestedRoom = tryGetExistingRoom(requestedRoomId).orElse(null);
 			if (requestedRoom == null) {
-				sendJsonResponse(httpExchange, 400, format("room %s does not exist", requestedRoomId));
+				FakeServerResponses.sendJsonResponse(httpExchange, 400, format("room %s does not exist", requestedRoomId));
 				return;
 			}
 
@@ -142,7 +152,7 @@ public class FakeChattyPie {
 			}
 
 			addOrUpdateRoom(updatedRoomBuilder.build());
-			sendJsonResponse(httpExchange, 204, "");
+			FakeServerResponses.sendJsonResponse(httpExchange, 204, "");
 		};
 
 		return logAndHandleRequest(httpExchange -> {
@@ -159,7 +169,7 @@ public class FakeChattyPie {
 			logRequest(httpExchange);
 
 			if (!requestHandler.apply(httpExchange)) {
-				methodNotAllowed(httpExchange);
+				FakeServerResponses.methodNotAllowed(httpExchange);
 			}
 		};
 	}
@@ -186,7 +196,7 @@ public class FakeChattyPie {
 		return Chatroom.builder().id(roomId).name("some-room-name").type("standard").status("active").accountId(accountId).build();
 	}
 
-	private boolean logRequest(HttpExchange httpExchange) {
-		return allRequestPaths.add(httpExchange.getRequestMethod() + " " + httpExchange.getRequestURI().toString());
+	private void logRequest(HttpExchange httpExchange) {
+		allRequestPaths.add(httpExchange.getRequestMethod() + " " + httpExchange.getRequestURI().toString());
 	}
 }

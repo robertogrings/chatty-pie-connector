@@ -5,18 +5,17 @@ import java.io.InputStream;
 
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 
-import com.amazonaws.services.cloudfront.model.InvalidArgumentException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-class JsonParser {
+public class JsonParser {
 
-	static JsonNode readJson(InputStream streamContainingJson) {
+	public static JsonNode readJson(InputStream streamContainingJson) {
 		try {
 			ObjectMapper jsonReader = theSameObjectMapperAsSpring();
 			return jsonReader.readTree(streamContainingJson);
 		} catch (IOException e) {
-			throw new InvalidArgumentException("Could not read from the stream: closed or broken?");
+			throw new RuntimeException("Could not read from the stream: closed or broken?", e);
 		}
 	}
 

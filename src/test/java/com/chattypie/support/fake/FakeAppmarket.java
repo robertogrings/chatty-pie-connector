@@ -1,9 +1,7 @@
-package com.chattypie.support;
+package com.chattypie.support.fake;
 
 import static com.chattypie.support.ContentOf.resourceAsString;
 import static com.chattypie.support.ContentOf.streamAsString;
-import static com.chattypie.support.FakeServerResponses.sendJsonResponse;
-import static com.chattypie.support.FakeServerResponses.sendResponse;
 import static com.chattypie.support.HttpClientHelper.anAppmarketHttpClient;
 import static com.chattypie.support.HttpClientHelper.get;
 import static java.nio.charset.StandardCharsets.UTF_8;
@@ -13,6 +11,10 @@ import java.net.InetSocketAddress;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import java.util.concurrent.TimeoutException;
 import java.util.function.Predicate;
 
@@ -41,9 +43,10 @@ public class FakeAppmarket {
 	private String lastRequestBody;
 	private Throwable backgroundThreadException;
 
-	public static FakeAppmarket create(int port, String isvKey, String isvSecret) throws IOException {
-		HttpServer server = HttpServer.create(new InetSocketAddress(port), 0);
-		return new FakeAppmarket(server, isvKey, isvSecret);
+	public static FakeAppmarket create(int port, String isvKey, String isvSecret) throws ExecutionException, InterruptedException {
+		ExecutorService executor = Executors.newFixedThreadPool(1);
+		Future<HttpServer> futureServer = executor.submit(() -> HttpServer.create(new InetSocketAddress(port), 10));
+		return new FakeAppmarket(futureServer.get(), isvKey, isvSecret);
 	}
 
 	private FakeAppmarket(HttpServer server, String isvKey, String isvSecret) {
@@ -74,7 +77,7 @@ public class FakeAppmarket {
 		return this;
 	}
 
-	public void stop() {
+	public void stop() throws Exception {
 		server.stop(0);
 		if (backgroundThreadException != null) {
 			IllegalThreadStateException illegalThreadStateException = new IllegalThreadStateException("One of the FakeAppMarket's request thread threw an exception. This is bad.");
@@ -175,7 +178,7 @@ public class FakeAppmarket {
 				allRequestPaths.add(t.getRequestURI().toString());
 
 				if (!authorized.test(t)) {
-					sendResponse(t, 401, "UNAUTHORIZED! Use OAUTH!".getBytes(UTF_8));
+					FakeServerResponses.sendResponse(t, 401, "UNAUTHORIZED! Use OAUTH!".getBytes(UTF_8));
 					return;
 				}
 				lastRequestBody = streamAsString(t.getRequestBody());
@@ -184,7 +187,7 @@ public class FakeAppmarket {
 			} catch (Exception e) {
 				backgroundThreadException = e;
 			} finally {
-				sendJsonResponse(t, 200, response);
+				FakeServerResponses.sendJsonResponse(t, 200, response);
 			}
 		}
 

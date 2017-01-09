@@ -1,29 +1,38 @@
-package com.chattypie.support;
+package com.chattypie.support.fake;
 
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 
+import org.springframework.beans.factory.DisposableBean;
+
 import com.icegreen.greenmail.util.GreenMail;
 import com.icegreen.greenmail.util.ServerSetup;
 
-public class FakeEmailServer {
+public class FakeEmailServer implements DisposableBean {
 	private GreenMail greenMailServer;
+	private int port;
 
-	public static FakeEmailServer create(int port) {
+	static FakeEmailServer create(int port) {
 		return new FakeEmailServer(port);
 	}
 
 	private FakeEmailServer(int port) {
+		this.port = port;
 		greenMailServer = new GreenMail(new ServerSetup(port, "127.0.0.1", ServerSetup.PROTOCOL_SMTP));
 	}
 
-	public FakeEmailServer start() {
+	FakeEmailServer start() {
 		greenMailServer.start();
 		return this;
 	}
 
-	public void stop() {
+	@Override
+	public void destroy() throws Exception {
 		greenMailServer.stop();
+	}
+
+	int getPort() {
+		return port;
 	}
 
 	public String lastMessageSubject() throws MessagingException {
