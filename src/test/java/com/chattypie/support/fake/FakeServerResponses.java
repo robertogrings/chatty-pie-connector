@@ -1,4 +1,4 @@
-package com.chattypie.support;
+package com.chattypie.support.fake;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 
@@ -27,7 +27,11 @@ class FakeServerResponses {
 	static void sendResponse(HttpExchange t, int statusCode, byte[] response) {
 		log.debug("responding {} - {}", statusCode, new String(response));
 		try {
-			t.sendResponseHeaders(statusCode, response.length);
+			boolean statusIs204 = statusCode == 204;
+			t.sendResponseHeaders(statusCode, statusIs204 ? -1 : response.length);
+			if (statusIs204) {
+				return; // 204 has no body, client will close connection as soon as headers are sent.
+			}
 		} catch (IOException e) {
 			log.error("exception occurred while sending response headers", e);
 		}
