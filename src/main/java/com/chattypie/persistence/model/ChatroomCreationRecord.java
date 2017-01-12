@@ -2,13 +2,10 @@ package com.chattypie.persistence.model;
 
 import javax.annotation.Generated;
 
-import lombok.EqualsAndHashCode;
-
 /**
  * ChatroomCreationRecord is a Querydsl bean type
  */
 @Generated("com.querydsl.codegen.BeanSerializer")
-@EqualsAndHashCode
 public class ChatroomCreationRecord {
 
     public ChatroomCreationRecord() {
