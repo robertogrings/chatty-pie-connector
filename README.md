@@ -41,7 +41,7 @@ endpoint of a running CPC instance. For example, the endpoint for the dev
 returns 200(OK)
 
 ## Adding a new field to the database
-Let's say you want to add a new column to the `company_account` table and expose is as a field in the `CompanyAccount` bean.
+Let's say you want to add a new column to the `company_account` table and expose it as a field in the `CompanyAccount` bean.
 Let's walk through the process required for that.
 
 ### Create Flyway migration
