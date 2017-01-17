@@ -14,31 +14,9 @@ import org.springframework.mail.javamail.JavaMailSender;
 
 import ch.qos.logback.access.tomcat.LogbackValve;
 import com.appdirect.sdk.ConnectorSdkConfiguration;
-import com.appdirect.sdk.appmarket.AppmarketEventHandler;
 import com.appdirect.sdk.appmarket.DeveloperSpecificAppmarketCredentialsSupplier;
-import com.appdirect.sdk.appmarket.events.AddonSubscriptionCancel;
-import com.appdirect.sdk.appmarket.events.SubscriptionCancel;
-import com.appdirect.sdk.appmarket.events.SubscriptionChange;
-import com.appdirect.sdk.appmarket.events.SubscriptionClosed;
-import com.appdirect.sdk.appmarket.events.SubscriptionDeactivated;
-import com.appdirect.sdk.appmarket.events.SubscriptionOrder;
-import com.appdirect.sdk.appmarket.events.SubscriptionReactivated;
-import com.appdirect.sdk.appmarket.events.SubscriptionUpcomingInvoice;
-import com.appdirect.sdk.appmarket.events.UserAssignment;
-import com.appdirect.sdk.appmarket.events.UserUnassignment;
 import com.appdirect.sdk.notification.HtmlEmailNotificationService;
-import com.chattypie.handler.AddonSubscriptionCancelHandler;
-import com.chattypie.handler.AddonSubscriptionOrderHandler;
-import com.chattypie.handler.SubscriptionCancelHandler;
-import com.chattypie.handler.SubscriptionChangeHandler;
-import com.chattypie.handler.SubscriptionClosedHandler;
-import com.chattypie.handler.SubscriptionDeactivatedHandler;
-import com.chattypie.handler.SubscriptionOrderHandler;
-import com.chattypie.handler.SubscriptionReactivatedHandler;
-import com.chattypie.handler.SubscriptionUpcomingInvoiceHandler;
-import com.chattypie.handler.UserAssignmentHandler;
-import com.chattypie.handler.UserUnassignmentHandler;
-import com.chattypie.service.appmarket.CompanyAccountService;
+import com.chattypie.handler.EventHandlersConfiguration;
 import com.chattypie.service.appmarket.CompanyAccountServiceConfiguration;
 import com.chattypie.service.chattypie.ChattyPieAccessConfiguration;
 import com.chattypie.service.chattypie.chatroom.ChatroomService;
@@ -52,6 +30,7 @@ import com.chattypie.web.StringBackedCredentialsSupplier;
 @Configuration
 @Import({
 	ConnectorSdkConfiguration.class,
+	EventHandlersConfiguration.class,
 	CompanyAccountServiceConfiguration.class,
 	ChattyPieAccessConfiguration.class
 })
@@ -92,65 +71,6 @@ public class RootConfiguration {
 			contentGenerator,
 			emailNotificationService
 		);
-	}
-
-	@Bean
-	public AddonSubscriptionOrderHandler addonOrderHandler(ChatroomService chatroomService) {
-		return new AddonSubscriptionOrderHandler(chatroomService);
-	}
-
-	@Bean
-	public AppmarketEventHandler<AddonSubscriptionCancel> addonSubscriptionCancelAppmarketEventHandler(ChatroomService chatroomService) {
-		return new AddonSubscriptionCancelHandler(chatroomService);
-	}
-
-	@Bean
-	public AppmarketEventHandler<SubscriptionOrder> subscriptionOrderHandler(
-		CompanyAccountService companyAccountService,
-		ChatroomService chatroomService,
-		NotificationService greetingsService) {
-
-		return new SubscriptionOrderHandler(companyAccountService, chatroomService, greetingsService);
-	}
-
-	@Bean
-	public AppmarketEventHandler<SubscriptionCancel> subscriptionCancelHandler(ChatroomService chatroomService) {
-		return new SubscriptionCancelHandler(chatroomService);
-	}
-
-	@Bean
-	public AppmarketEventHandler<SubscriptionChange> subscriptionChangeHandler() {
-		return new SubscriptionChangeHandler();
-	}
-
-	@Bean
-	public AppmarketEventHandler<SubscriptionDeactivated> subscriptionDeactivatedAppmarketEventHandler(ChatroomService chatroomService) {
-		return new SubscriptionDeactivatedHandler(chatroomService);
-	}
-
-	@Bean
-	public AppmarketEventHandler<SubscriptionReactivated> subscriptionReactivatedAppmarketEventHandler(ChatroomService chatroomService) {
-		return new SubscriptionReactivatedHandler(chatroomService);
-	}
-
-	@Bean
-	public AppmarketEventHandler<SubscriptionClosed> subscriptionClosedAppmarketEventHandler(ChatroomService chatroomService) {
-		return new SubscriptionClosedHandler(chatroomService);
-	}
-
-	@Bean
-	public AppmarketEventHandler<SubscriptionUpcomingInvoice> subscriptionUpcomingInvoiceAppmarketEventHandler() {
-		return new SubscriptionUpcomingInvoiceHandler();
-	}
-
-	@Bean
-	public AppmarketEventHandler<UserAssignment> userAssignmentAppmarketEventHandler() {
-		return new UserAssignmentHandler();
-	}
-
-	@Bean
-	public AppmarketEventHandler<UserUnassignment> userUnassignmentAppmarketEventHandler() {
-		return new UserUnassignmentHandler();
 	}
 
 	@Bean
