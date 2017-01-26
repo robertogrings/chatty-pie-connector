@@ -3,7 +3,6 @@ package com.chattypie.util;
 import static java.time.Duration.ofMillis;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.within;
 
 import org.junit.Test;
 
@@ -17,6 +16,6 @@ public class DelayerTest {
 
 		new Delayer().delayFor(ofMillis(500));
 
-		assertThat(stopWatch.elapsed(MILLISECONDS)).isCloseTo(500L, within(50L));
+		assertThat(stopWatch.elapsed(MILLISECONDS)).isGreaterThan(500L);
 	}
 }
