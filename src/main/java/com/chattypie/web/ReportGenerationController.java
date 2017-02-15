@@ -1,6 +1,5 @@
 package com.chattypie.web;
 
-import static org.springframework.http.MediaType.TEXT_PLAIN_VALUE;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 
 import java.util.List;
@@ -24,7 +23,7 @@ public class ReportGenerationController {
 	private final NotificationService notificationService;
 	private final String receiverEmail;
 
-	@RequestMapping(method = GET, value = "/chatrooms/daily", produces = TEXT_PLAIN_VALUE)
+	@RequestMapping(method = GET, value = "/chatrooms/daily")
 	public String getChatroomReport() {
 		List<ChatroomCreationRecord> chatroomsCreatedLastWeek = chatroomReportService.chatroomsCreatedOverTheLastDay();
 		notificationService.sendDailyChatroomCreatedReport(receiverEmail, chatroomsCreatedLastWeek);
