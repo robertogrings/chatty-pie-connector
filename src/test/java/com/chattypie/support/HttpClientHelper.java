@@ -2,6 +2,7 @@ package com.chattypie.support;
 
 
 import static java.util.Arrays.asList;
+import static java.util.Collections.singletonList;
 
 import java.net.URISyntaxException;
 
@@ -20,6 +21,15 @@ public class HttpClientHelper {
 				.setDefaultHeaders(asList(
 						new BasicHeader(HttpHeaders.ACCEPT, "application/json, application/xml"),
 						new BasicHeader(HttpHeaders.ACCEPT_ENCODING, "gzip, deflate")))
+				.disableRedirectHandling()
+				.build();
+	}
+
+	public static CloseableHttpClient aKubernetesHttpClient() {
+		return HttpClients.custom()
+				.setUserAgent("")
+				.setDefaultHeaders(singletonList(
+						new BasicHeader(HttpHeaders.ACCEPT, "text/plain, text/html")))
 				.disableRedirectHandling()
 				.build();
 	}

@@ -15,6 +15,7 @@ import org.springframework.mail.javamail.JavaMailSender;
 import ch.qos.logback.access.tomcat.LogbackValve;
 import com.appdirect.sdk.ConnectorSdkConfiguration;
 import com.appdirect.sdk.appmarket.DeveloperSpecificAppmarketCredentialsSupplier;
+import com.appdirect.sdk.credentials.StringBackedCredentialsSupplier;
 import com.appdirect.sdk.notification.HtmlEmailNotificationService;
 import com.chattypie.handler.EventHandlersConfiguration;
 import com.chattypie.service.appmarket.CompanyAccountServiceConfiguration;
@@ -23,9 +24,7 @@ import com.chattypie.service.chattypie.chatroom.ChatroomService;
 import com.chattypie.service.chattypie.greeting.EmailContentGenerator;
 import com.chattypie.service.chattypie.greeting.EmailNotificationService;
 import com.chattypie.service.chattypie.greeting.NotificationService;
-import com.chattypie.util.MapBuilder;
 import com.chattypie.web.ReportGenerationController;
-import com.chattypie.web.StringBackedCredentialsSupplier;
 
 @Configuration
 @Import({
@@ -39,7 +38,7 @@ public class RootConfiguration {
 
 	@Bean
 	public DeveloperSpecificAppmarketCredentialsSupplier environmentCredentialsSupplier(@Value("${connector.allowed.credentials}") String allowedCredentials) {
-		return new StringBackedCredentialsSupplier(allowedCredentials, new MapBuilder());
+		return new StringBackedCredentialsSupplier(allowedCredentials);
 	}
 
 	@Bean
@@ -71,11 +70,6 @@ public class RootConfiguration {
 			contentGenerator,
 			emailNotificationService
 		);
-	}
-
-	@Bean
-	public ErrorHandler errorHandler() {
-		return new ErrorHandler();
 	}
 
 	@Bean
