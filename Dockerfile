@@ -1,4 +1,4 @@
-FROM openjdk:8u92-jdk-alpine
+FROM openjdk:8u121-jdk-alpine
 
 MAINTAINER Partner Integrations team <partner.integrations@appdirect.com>
 
