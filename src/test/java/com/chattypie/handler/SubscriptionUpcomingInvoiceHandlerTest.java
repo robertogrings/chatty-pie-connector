@@ -21,7 +21,10 @@ public class SubscriptionUpcomingInvoiceHandlerTest {
 				"some-key",
 				AccountInfo.builder().status(ACTIVE).build(),
 				new HashMap<>(),
-				null);
+				null, 
+				null, 
+				null
+		);
 
 		//When
 		APIResult result = testtedHandler.handle(testEvent);

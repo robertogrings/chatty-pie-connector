@@ -37,6 +37,8 @@ public class AddonSubscriptionOrderHandlerTest {
 				null,
 				null,
 				existingChatroomId,
+				null,
+				null,
 				null
 		);
 	}

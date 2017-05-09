@@ -32,7 +32,7 @@ public class SubscriptionCancelHandlerTest {
 	public void handleSubscriptionCancel_shouldSuspendChatroom() throws Exception {
 		//Given
 		String testAppmarketAccountId = "test-id-value";
-		SubscriptionCancel testCancelEvent = new SubscriptionCancel("some-key", testAppmarketAccountId, new HashMap<>(), null);
+		SubscriptionCancel testCancelEvent = new SubscriptionCancel("some-key", testAppmarketAccountId, new HashMap<>(), null, null, null);
 
 		//When
 		APIResult eventResponse = testedEventHandler.handle(testCancelEvent);

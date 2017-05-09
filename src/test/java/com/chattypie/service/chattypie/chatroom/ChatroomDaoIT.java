@@ -47,7 +47,7 @@ public class ChatroomDaoIT {
 	public void testStoreChatroom_whenAChatroomIsStored_thenItCanBeReadBack() throws Exception {
 		//Given
 		String expectedChatroomId = "expectedChatroomId";
-		Instant oneSecondBeforeTest = now().minusSeconds(10).toInstant();
+		Instant tenSecondsBeforeTest = now().minusSeconds(10).toInstant();
 
 		//When
 		testedChatroomDao.storeChatroom(expectedChatroomId);
@@ -55,7 +55,7 @@ public class ChatroomDaoIT {
 			now().minusDays(1)
 		);
 
-		Instant oneSecondAfterTest = now().plusSeconds(10).toInstant();
+		Instant tenSecondsAfterTest = now().plusSeconds(10).toInstant();
 
 		//Then
 		assertThat(chatroomsRead)
@@ -63,7 +63,7 @@ public class ChatroomDaoIT {
 		assertThat(chatroomsRead.get(0).getId())
 			.isEqualTo(expectedChatroomId);
 		assertThat(chatroomsRead.get(0).getCreationDate())
-			.isBetween(oneSecondBeforeTest, oneSecondAfterTest);
+			.isBetween(tenSecondsBeforeTest, tenSecondsAfterTest);
 	}
 
 	@Test

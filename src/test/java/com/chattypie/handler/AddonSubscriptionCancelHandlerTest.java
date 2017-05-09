@@ -50,6 +50,8 @@ public class AddonSubscriptionCancelHandlerTest {
 			addonParentAccountId, 
 			null, 
 			null,
+			null, 
+			null, 
 			null
 		);
 	}
