@@ -66,7 +66,6 @@ public class CanDispatchAddonCancelIT {
 		assertThat(fakeAppmarket.resolvedEvents()).contains("cancel-addon");
 
 		assertThat(fakeAppmarket.lastRequestBody()).isEqualTo("{\"success\":true,\"message\":\"Addon account with accountId=9d6fca98-aa94-462b-85fa-118804ad3fe3 cancelled successfully\"}");
-
 		assertThat(fakeChattyPie.allRequestPaths()).last().isEqualTo("PUT /rooms/room-of-the-account");
 		assertThat(fakeChattyPie.getExistingRoom("room-of-the-account").isFullHistoryEnabled()).isFalse();
 	}
