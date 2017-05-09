@@ -40,6 +40,8 @@ public class SubscriptionDeactivatedHandlerTest {
 						.accountIdentifier(testAppmarketAccountId)
 						.status(ACTIVE).build(),
 				new HashMap<>(),
+				null, 
+				null, 
 				null
 		);
 

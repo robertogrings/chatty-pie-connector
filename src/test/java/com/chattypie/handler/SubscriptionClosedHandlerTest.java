@@ -40,6 +40,8 @@ public class SubscriptionClosedHandlerTest {
 						.accountIdentifier(testChatroomIdentifier)
 						.status(CANCELLED).build(),
 				new HashMap<>(),
+				null,
+				null,
 				null
 		);
 
