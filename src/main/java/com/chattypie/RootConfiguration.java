@@ -3,10 +3,12 @@ package com.chattypie;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.context.embedded.EmbeddedServletContainerFactory;
 import org.springframework.boot.context.embedded.tomcat.TomcatEmbeddedServletContainerFactory;
+import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
@@ -19,7 +21,6 @@ import com.appdirect.sdk.credentials.StringBackedCredentialsSupplier;
 import com.appdirect.sdk.notification.HtmlEmailNotificationService;
 import com.chattypie.handler.EventHandlersConfiguration;
 import com.chattypie.service.appmarket.CompanyAccountServiceConfiguration;
-import com.chattypie.service.chattypie.ChattyPieAccessConfiguration;
 import com.chattypie.service.chattypie.chatroom.ChatroomService;
 import com.chattypie.service.chattypie.greeting.EmailContentGenerator;
 import com.chattypie.service.chattypie.greeting.EmailNotificationService;
@@ -28,10 +29,11 @@ import com.chattypie.web.ReportGenerationController;
 
 @Configuration
 @Import({
-	ConnectorSdkConfiguration.class,
-	EventHandlersConfiguration.class,
-	CompanyAccountServiceConfiguration.class,
-	ChattyPieAccessConfiguration.class
+		ConnectorSdkConfiguration.class,
+		EventHandlersConfiguration.class,
+		ValidationEndpointConfiguration.class,
+		CompanyAccountServiceConfiguration.class,
+		LocalizationConfiguration.class
 })
 @EnableAutoConfiguration
 public class RootConfiguration {
@@ -67,8 +69,8 @@ public class RootConfiguration {
 	public NotificationService newCompanyGreetingService(EmailContentGenerator contentGenerator,
 														 HtmlEmailNotificationService emailNotificationService) {
 		return new EmailNotificationService(
-			contentGenerator,
-			emailNotificationService
+				contentGenerator,
+				emailNotificationService
 		);
 	}
 
@@ -79,14 +81,19 @@ public class RootConfiguration {
 
 	@Bean
 	public ReportGenerationController reportGenerationController(
-		ChatroomService chatroomService,
-		NotificationService notificationService,
-		@Value("${chatroom.report.subscriber}") String chatroomReportSubscriberEmail) {
+			ChatroomService chatroomService,
+			NotificationService notificationService,
+			@Value("${chatroom.report.subscriber}") String chatroomReportSubscriberEmail) {
 
 		return new ReportGenerationController(
-			chatroomService,
-			notificationService,
-			chatroomReportSubscriberEmail
+				chatroomService,
+				notificationService,
+				chatroomReportSubscriberEmail
 		);
+	}
+
+	@Bean
+	public LocalizedMessageService messageService(@Qualifier("localizedMessageSource") MessageSource messageSource) {
+		return new LocalizedMessageServiceImpl(messageSource);
 	}
 }
