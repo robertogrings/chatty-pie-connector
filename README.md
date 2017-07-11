@@ -30,15 +30,11 @@ If you do not have both, we offer a docker compose file at the root. Run it with
     docker-compose up
 
 ## Accessing the app
-The chatty-pie-connector is deployed in 3 environments: DEV, TEST and PROD
-* The DEV instance is available at https://dev-cpc.devappdirect.me
-* The TEST instance is available at https://test-cpc.devappdirect.me
-* The PROD instance is available at https://cpc.appdirect.com
 
 To verify that the server is running correctly, check if a GET request at the `/health`
-endpoint of a running CPC instance. For example, the endpoint for the dev 
-[https://dev-cpc.devappdirect.me/health](https://dev-cpc.devappdirect.me/health)
-returns 200(OK)
+endpoint of a running CPC instance. For example, if the connector were deployed at [https://example.com]() the health 
+endpoint would be [https://example.com/health]() and it would be expected to return returns 200(OK) if the server is
+up and running.
 
 ## Adding a new field to the database
 Let's say you want to add a new column to the `company_account` table and expose it as a field in the `CompanyAccount` bean.
@@ -66,13 +62,6 @@ Using the [`versions` maven plugin](http://www.mojohaus.org/versions-maven-plugi
 your dependencies & maven plugins up-to-date. Most of those commands directly modify your `pom.xml`.
 * update the `spring-boot` parent version: `./mvnw versions:update-parent`
 * update all dependencies: `./mvnw versions:use-latest-releases`
-    * Warning: this takes _15 minutes_ due to each dependency polling `artifactory.appdirect.com` (and it seems as if that is very slow)
+    * Warning: this might take a long time to complete
 * display available maven plugin updates `./mvnw versions:display-plugin-updates`
     * If newer versions are available, you will need to manually update `pom.xml`.
-
-## Deployment procedure:
-The instructions for deploying the application vary according to the target environment. Check them out at the 
-[project wiki](https://github.com/AppDirect/chatty-pie-connector/wiki/Deployment-Procedure) 
-
-## TestRails
-* [We have some testrails here](https://appdirect.testrail.com/index.php?/suites/view/98&group_by=cases:section_id&group_id=2139181&group_order=asc)
