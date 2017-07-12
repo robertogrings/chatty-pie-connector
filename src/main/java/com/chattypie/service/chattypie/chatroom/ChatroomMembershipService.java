@@ -22,10 +22,10 @@ import org.springframework.web.client.RestTemplate;
 @RequiredArgsConstructor
 public class ChatroomMembershipService {
 	private static final String CHATROOM_USERS_RESOURCE_ENDPOINT_TEMPLATE = "%s/rooms/%s/users/%s";
-	
+
 	private final RestTemplate restTemplate;
 	private final String chattyPieHost;
-	
+
 	public void assignUserToChatroom(String idOfChatroom, String emailOfUser) {
 		restTemplate.postForLocation(
 				format(CHATROOM_USERS_RESOURCE_ENDPOINT_TEMPLATE, chattyPieHost, idOfChatroom, emailOfUser),

@@ -21,7 +21,6 @@ import com.appdirect.sdk.appmarket.AppmarketEventHandler;
 import com.appdirect.sdk.appmarket.events.APIResult;
 import com.appdirect.sdk.appmarket.events.UserAssignment;
 import com.chattypie.service.chattypie.chatroom.ChatroomMembershipService;
-import com.chattypie.service.chattypie.chatroom.ChatroomService;
 
 @RequiredArgsConstructor
 public class UserAssignmentHandler implements AppmarketEventHandler<UserAssignment> {
@@ -34,7 +33,7 @@ public class UserAssignmentHandler implements AppmarketEventHandler<UserAssignme
 		final String assignedUserEmail = event.getAssignedUser().getEmail();
 
 		chatroomService.assignUserToChatroom(chatroomToAsssignTo, assignedUserEmail);
- 
+
 		return APIResult.success(format(
 				"Successfully assigned user with email %s to chatroom %s",
 				assignedUserEmail,

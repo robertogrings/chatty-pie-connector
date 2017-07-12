@@ -21,7 +21,6 @@ import com.appdirect.sdk.appmarket.AppmarketEventHandler;
 import com.appdirect.sdk.appmarket.events.APIResult;
 import com.appdirect.sdk.appmarket.events.UserUnassignment;
 import com.chattypie.service.chattypie.chatroom.ChatroomMembershipService;
-import com.chattypie.service.chattypie.chatroom.ChatroomService;
 
 @RequiredArgsConstructor
 public class UserUnassignmentHandler implements AppmarketEventHandler<UserUnassignment> {
