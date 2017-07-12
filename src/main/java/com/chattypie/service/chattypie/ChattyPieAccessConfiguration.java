@@ -20,6 +20,7 @@ import org.springframework.web.client.RestTemplate;
 
 import com.chattypie.service.chattypie.account.ChattyPieAccountService;
 import com.chattypie.service.chattypie.chatroom.ChatroomDao;
+import com.chattypie.service.chattypie.chatroom.ChatroomMembershipService;
 import com.chattypie.service.chattypie.chatroom.ChatroomService;
 import com.chattypie.util.Delayer;
 import com.querydsl.sql.SQLQueryFactory;
@@ -54,6 +55,14 @@ public class ChattyPieAccessConfiguration {
 		return new ChatroomService(
 				chattyPieRestTemplate(),
 				chatroomDao,
+				chattyPieHost
+		);
+	}
+
+	@Bean
+	public ChatroomMembershipService chatroomMembershipService() {
+		return new ChatroomMembershipService(
+				chattyPieRestTemplate(),
 				chattyPieHost
 		);
 	}

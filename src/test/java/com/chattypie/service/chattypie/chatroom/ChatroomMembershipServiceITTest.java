@@ -35,20 +35,17 @@ import org.springframework.web.client.RestTemplate;
 import com.github.tomakehurst.wiremock.junit.WireMockRule;
 
 @RunWith(MockitoJUnitRunner.class)
-public class ChatroomServiceITTest {
+public class ChatroomMembershipServiceITTest {
 
-	private ChatroomService chatroomService;
+	private ChatroomMembershipService chatroomService;
 
 	@Rule
 	public WireMockRule mockServer = new WireMockRule(options().dynamicPort());
 
-	@Mock
-	private ChatroomDao chatroomDaoMock;
-
 	@Before
 	public void setUp() throws Exception {
 		String testChattyPieHost = format("http://localhost:%d", mockServer.port());
-		chatroomService = new ChatroomService(new RestTemplate(), chatroomDaoMock, testChattyPieHost);
+		chatroomService = new ChatroomMembershipService(new RestTemplate(), testChattyPieHost);
 	}
 
 	@Test

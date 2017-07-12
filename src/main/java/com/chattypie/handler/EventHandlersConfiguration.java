@@ -29,6 +29,7 @@ import com.appdirect.sdk.appmarket.events.SubscriptionUpcomingInvoice;
 import com.appdirect.sdk.appmarket.events.UserAssignment;
 import com.appdirect.sdk.appmarket.events.UserUnassignment;
 import com.chattypie.service.appmarket.CompanyAccountService;
+import com.chattypie.service.chattypie.chatroom.ChatroomMembershipService;
 import com.chattypie.service.chattypie.chatroom.ChatroomService;
 import com.chattypie.service.chattypie.greeting.NotificationService;
 
@@ -80,13 +81,13 @@ public class EventHandlersConfiguration {
 
 	@Primary
 	@Bean
-	public AppmarketEventHandler<UserAssignment> userAssignmentAppmarketEventHandler(ChatroomService chatroomService) {
+	public AppmarketEventHandler<UserAssignment> userAssignmentAppmarketEventHandler(ChatroomMembershipService chatroomService) {
 		return new UserAssignmentHandler(chatroomService);
 	}
 
 	@Primary
 	@Bean
-	public AppmarketEventHandler<UserUnassignment> userUnassignmentAppmarketEventHandler(ChatroomService chatroomService) {
+	public AppmarketEventHandler<UserUnassignment> userUnassignmentAppmarketEventHandler(ChatroomMembershipService chatroomService) {
 		return new UserUnassignmentHandler(chatroomService);
 	}
 

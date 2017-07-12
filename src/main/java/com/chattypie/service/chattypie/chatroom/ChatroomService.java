@@ -80,17 +80,4 @@ public class ChatroomService {
 	public List<ChatroomCreationRecord> chatroomsCreatedOverTheLastDay() {
 		return chatroomDao.readCreatedSince(now().minusDays(1));
 	}
-
-	public void assignUserToChatroom(String idOfChatroom, String emailOfUser) {
-		restTemplate.postForLocation(
-				format(CHATROOM_USERS_RESOURCE_ENDPOINT_TEMPLATE, chattyPieHost, idOfChatroom, emailOfUser),
-				""
-		);
-	}
-
-	public void unassignUserFromChatroom(String idOfChatroom, String emailOfUser) {
-		restTemplate.delete(
-				format(CHATROOM_USERS_RESOURCE_ENDPOINT_TEMPLATE, chattyPieHost, idOfChatroom, emailOfUser)
-		);
-	}
 }

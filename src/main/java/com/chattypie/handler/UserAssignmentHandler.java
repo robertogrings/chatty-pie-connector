@@ -20,12 +20,13 @@ import lombok.RequiredArgsConstructor;
 import com.appdirect.sdk.appmarket.AppmarketEventHandler;
 import com.appdirect.sdk.appmarket.events.APIResult;
 import com.appdirect.sdk.appmarket.events.UserAssignment;
+import com.chattypie.service.chattypie.chatroom.ChatroomMembershipService;
 import com.chattypie.service.chattypie.chatroom.ChatroomService;
 
 @RequiredArgsConstructor
 public class UserAssignmentHandler implements AppmarketEventHandler<UserAssignment> {
 
-	private final ChatroomService chatroomService;
+	private final ChatroomMembershipService chatroomService;
 
 	@Override
 	public APIResult handle(UserAssignment event) {

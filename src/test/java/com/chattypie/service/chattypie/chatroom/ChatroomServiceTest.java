@@ -158,35 +158,4 @@ public class ChatroomServiceTest {
 		//Then
 		assertThat(actualChatroomsCreated).isEqualTo(expectedChatrooms);
 	}
-
-	@Test
-	public void testAssignUserToChatroom_whenUserIsAssigned_thenAPostIsSendToTheChattyPieApiResource() throws Exception {
-		//Given
-		String testChatroomId = "testChatroomId";
-		String testAssignedUserEmail = "dummy@example.com";
-
-		//When
-		testedChatroomService.assignUserToChatroom(testChatroomId, testAssignedUserEmail);
-
-		//Then
-		verify(mockRestTemplate).postForLocation(
-			eq(format("%s/rooms/%s/users/%s", mockChattyPieHost, testChatroomId, testAssignedUserEmail)),
-			eq("")
-		);
-	}
-
-	@Test
-	public void testUnassignUserToChatroom_whenUserIsUnassigned_thenADeleteIsSendToTheChattyPieApiResource() throws Exception {
-		//Given
-		String testChatroomId = "testChatroomId";
-		String testAssignedUserEmail = "dummy@example.com";
-
-		//When
-		testedChatroomService.unassignUserFromChatroom(testChatroomId, testAssignedUserEmail);
-
-		//Then
-		verify(mockRestTemplate).delete(
-				eq(format("%s/rooms/%s/users/%s", mockChattyPieHost, testChatroomId, testAssignedUserEmail))
-		);
-	}
 }
