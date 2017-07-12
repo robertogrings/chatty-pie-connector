@@ -80,14 +80,14 @@ public class EventHandlersConfiguration {
 
 	@Primary
 	@Bean
-	public AppmarketEventHandler<UserAssignment> userAssignmentAppmarketEventHandler() {
-		return new UserAssignmentHandler();
+	public AppmarketEventHandler<UserAssignment> userAssignmentAppmarketEventHandler(ChatroomService chatroomService) {
+		return new UserAssignmentHandler(chatroomService);
 	}
 
 	@Primary
 	@Bean
-	public AppmarketEventHandler<UserUnassignment> userUnassignmentAppmarketEventHandler() {
-		return new UserUnassignmentHandler();
+	public AppmarketEventHandler<UserUnassignment> userUnassignmentAppmarketEventHandler(ChatroomService chatroomService) {
+		return new UserUnassignmentHandler(chatroomService);
 	}
 
 	@Primary
