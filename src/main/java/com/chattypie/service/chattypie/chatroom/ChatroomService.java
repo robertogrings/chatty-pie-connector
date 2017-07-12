@@ -27,7 +27,6 @@ import com.chattypie.persistence.model.ChatroomCreationRecord;
 @RequiredArgsConstructor
 public class ChatroomService {
 	private static final String CHATROOM_RESOURCE_ENDPOINT_TEMPLATE = "%s/rooms/%s";
-	private static final String CHATROOM_USERS_RESOURCE_ENDPOINT_TEMPLATE = "%s/rooms/%s/users/%s";
 
 	private final RestTemplate restTemplate;
 	private final ChatroomDao chatroomDao;
