@@ -26,16 +26,16 @@ public class ChatroomMembershipService {
 	private final RestTemplate restTemplate;
 	private final String chattyPieHost;
 
-	public void assignUserToChatroom(String idOfChatroom, String emailOfUser) {
+	public void assignUserToChatroom(String chatroomId, String userEmail) {
 		restTemplate.postForLocation(
-				format(CHATROOM_USERS_RESOURCE_ENDPOINT_TEMPLATE, chattyPieHost, idOfChatroom, emailOfUser),
+				format(CHATROOM_USERS_RESOURCE_ENDPOINT_TEMPLATE, chattyPieHost, chatroomId, userEmail),
 				""
 		);
 	}
 
-	public void unassignUserFromChatroom(String idOfChatroom, String emailOfUser) {
+	public void unassignUserFromChatroom(String chatroomId, String userEmail) {
 		restTemplate.delete(
-				format(CHATROOM_USERS_RESOURCE_ENDPOINT_TEMPLATE, chattyPieHost, idOfChatroom, emailOfUser)
+				format(CHATROOM_USERS_RESOURCE_ENDPOINT_TEMPLATE, chattyPieHost, chatroomId, userEmail)
 		);
 	}
 }
