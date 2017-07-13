@@ -34,9 +34,9 @@ public class ChatroomService {
 
 	public Chatroom createChatroomForAccount(String accountId, String chatroomName) {
 		Chatroom createdChatroom = restTemplate.postForObject(
-			format("%s/accounts/%s/rooms", chattyPieHost, accountId),
-			format("{\"name\": \"%s\"}", chatroomName),
-			Chatroom.class
+				format("%s/accounts/%s/rooms", chattyPieHost, accountId),
+				format("{\"name\": \"%s\"}", chatroomName),
+				Chatroom.class
 		);
 		chatroomDao.storeChatroom(createdChatroom.getId());
 		return createdChatroom;
@@ -44,35 +44,35 @@ public class ChatroomService {
 
 	public void removeChatroom(String idOfChatroomToRemove) {
 		restTemplate.delete(
-			format(CHATROOM_RESOURCE_ENDPOINT_TEMPLATE, chattyPieHost, idOfChatroomToRemove)
+				format(CHATROOM_RESOURCE_ENDPOINT_TEMPLATE, chattyPieHost, idOfChatroomToRemove)
 		);
 	}
 
 	public void suspendChatroom(String idOfChatroomToSuspend) {
 		restTemplate.put(
-			format(CHATROOM_RESOURCE_ENDPOINT_TEMPLATE, chattyPieHost, idOfChatroomToSuspend),
-			"{\"status\":\"suspended\"}"
+				format(CHATROOM_RESOURCE_ENDPOINT_TEMPLATE, chattyPieHost, idOfChatroomToSuspend),
+				"{\"status\":\"suspended\"}"
 		);
 	}
 
 	public void reactivate(String idOfChatroomToReactivate) {
 		restTemplate.put(
-			format(CHATROOM_RESOURCE_ENDPOINT_TEMPLATE, chattyPieHost, idOfChatroomToReactivate),
-			"{\"status\":\"active\"}"
+				format(CHATROOM_RESOURCE_ENDPOINT_TEMPLATE, chattyPieHost, idOfChatroomToReactivate),
+				"{\"status\":\"active\"}"
 		);
 	}
 
 	public void enableUnlimitedHistory(String idOfChatroom) {
 		restTemplate.put(
-			format(CHATROOM_RESOURCE_ENDPOINT_TEMPLATE, chattyPieHost, idOfChatroom),
-			"{\"full_history_enabled\":\"true\"}"
+				format(CHATROOM_RESOURCE_ENDPOINT_TEMPLATE, chattyPieHost, idOfChatroom),
+				"{\"full_history_enabled\":\"true\"}"
 		);
 	}
 
 	public void disableUnlimitedHistory(String idOfChatroom) {
 		restTemplate.put(
-			format(CHATROOM_RESOURCE_ENDPOINT_TEMPLATE, chattyPieHost, idOfChatroom),
-			"{\"full_history_enabled\":\"false\"}"
+				format(CHATROOM_RESOURCE_ENDPOINT_TEMPLATE, chattyPieHost, idOfChatroom),
+				"{\"full_history_enabled\":\"false\"}"
 		);
 	}
 

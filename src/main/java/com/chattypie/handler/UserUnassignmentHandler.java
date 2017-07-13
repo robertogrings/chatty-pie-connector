@@ -13,14 +13,31 @@
 
 package com.chattypie.handler;
 
+import static java.lang.String.format;
+
+import lombok.RequiredArgsConstructor;
+
 import com.appdirect.sdk.appmarket.AppmarketEventHandler;
 import com.appdirect.sdk.appmarket.events.APIResult;
-import com.appdirect.sdk.appmarket.events.ErrorCode;
 import com.appdirect.sdk.appmarket.events.UserUnassignment;
+import com.chattypie.service.chattypie.chatroom.ChatroomMembershipService;
 
+@RequiredArgsConstructor
 public class UserUnassignmentHandler implements AppmarketEventHandler<UserUnassignment> {
+
+	private final ChatroomMembershipService chatroomService;
+
 	@Override
 	public APIResult handle(UserUnassignment event) {
-		return APIResult.failure(ErrorCode.OPERATION_CANCELLED, "This is not yet implemented");
+		final String chatroomToAsssignTo = event.getAccountId();
+		final String assignedUserEmail = event.getUnassignedUser().getEmail();
+
+		chatroomService.unassignUserFromChatroom(chatroomToAsssignTo, assignedUserEmail);
+
+		return APIResult.success(format(
+				"Successfully unassigned user with email %s from chatroom %s",
+				assignedUserEmail,
+				chatroomToAsssignTo
+		));
 	}
 }

@@ -152,8 +152,6 @@ public class ChatroomServiceTest {
 		when(mockChatroomDao.readCreatedSince(sinceDateCaptor.capture()))
 			.thenReturn(expectedChatrooms);
 
-		ZonedDateTime testStartTime = now();
-
 		//When
 		List<ChatroomCreationRecord> actualChatroomsCreated = testedChatroomService.chatroomsCreatedOverTheLastDay();
 
