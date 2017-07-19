@@ -1,7 +1,12 @@
-chatty.pie.host: https://operating-attic-146121.appspot.com
+# Don't forget to point this to your own chatty-pie instance
+chatty.pie.host: https://chattypie-148413.appspot.com
 chatroom.report.subscriber: chatty.pie.team@yopmail.com
-connector.allowed.credentials: very-secure:password,search-1533:PrTW5GrHn6WNHHxt # default creds. Actual creds are injected in kube
+# default credentials. Can be overridden through environment variables 
+connector.allowed.credentials: very-secure:password,search-1533:PrTW5GrHn6WNHHxt
 
+#Override this if the address of the connector instance is using https, otherwise the oauth request validation 
+#will fail
+signature.validation.use.https: false
 spring.datasource:
     #See http://stackoverflow.com/questions/7605953/how-to-change-mysql-timezone-in-java-connection for explanation 
     #on the `useLegacyDatetimeCode` parameter
