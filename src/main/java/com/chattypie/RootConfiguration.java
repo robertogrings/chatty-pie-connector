@@ -32,6 +32,7 @@ import com.appdirect.sdk.ConnectorSdkConfiguration;
 import com.appdirect.sdk.appmarket.DeveloperSpecificAppmarketCredentialsSupplier;
 import com.appdirect.sdk.credentials.StringBackedCredentialsSupplier;
 import com.appdirect.sdk.notification.HtmlEmailNotificationService;
+import com.chattypie.domain.ownership.verification.DomainOwnershipVerificationConfiguration;
 import com.chattypie.handler.EventHandlersConfiguration;
 import com.chattypie.service.appmarket.CompanyAccountServiceConfiguration;
 import com.chattypie.service.chattypie.chatroom.ChatroomService;
@@ -46,7 +47,8 @@ import com.chattypie.web.ReportGenerationController;
 		EventHandlersConfiguration.class,
 		ValidationEndpointConfiguration.class,
 		CompanyAccountServiceConfiguration.class,
-		LocalizationConfiguration.class
+		LocalizationConfiguration.class,
+		DomainOwnershipVerificationConfiguration.class
 })
 @EnableAutoConfiguration
 public class RootConfiguration {

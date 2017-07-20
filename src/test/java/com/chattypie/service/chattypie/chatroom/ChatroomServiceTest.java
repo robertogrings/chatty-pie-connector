@@ -14,14 +14,15 @@
 package com.chattypie.service.chattypie.chatroom;
 
 import static java.lang.String.format;
-import static java.time.ZonedDateTime.now;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.catchThrowable;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.time.ZonedDateTime;
 import java.util.List;
+import java.util.UUID;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -37,7 +38,7 @@ import com.google.common.collect.Lists;
 @RunWith(MockitoJUnitRunner.class)
 public class ChatroomServiceTest {
 	private ChatroomService testedChatroomService;
-	private String mockChattyPieHost = "http://www.google.ca";
+	private String mockChattyPieHost = "http://www.chatty-pie.ca";
 
 	@Mock
 	private RestTemplate mockRestTemplate;
@@ -60,8 +61,8 @@ public class ChatroomServiceTest {
 
 		//Then
 		verify(mockRestTemplate).put(
-			eq(format("%s/rooms/%s", mockChattyPieHost, testChatromId)),
-			eq("{\"status\":\"suspended\"}")
+				eq(format("%s/rooms/%s", mockChattyPieHost, testChatromId)),
+				eq("{\"status\":\"suspended\"}")
 		);
 	}
 
@@ -75,8 +76,8 @@ public class ChatroomServiceTest {
 
 		//Then
 		verify(mockRestTemplate).put(
-			eq(format("%s/rooms/%s", mockChattyPieHost, testChatromId)),
-			eq("{\"status\":\"active\"}")
+				eq(format("%s/rooms/%s", mockChattyPieHost, testChatromId)),
+				eq("{\"status\":\"active\"}")
 		);
 	}
 
@@ -88,11 +89,11 @@ public class ChatroomServiceTest {
 		String expectedChatroomId = "expectedChatroomId";
 		Chatroom expectedCompany = Chatroom.builder().id(expectedChatroomId).name(testChatroomName).accountId(testAccountId).build();
 		when(
-			mockRestTemplate.postForObject(
-				format("%s/accounts/%s/rooms", mockChattyPieHost, testAccountId),
-				format("{\"name\": \"%s\"}", testChatroomName),
-				Chatroom.class
-			)
+				mockRestTemplate.postForObject(
+						format("%s/accounts/%s/rooms", mockChattyPieHost, testAccountId),
+						format("{\"name\": \"%s\"}", testChatroomName),
+						Chatroom.class
+				)
 		).thenReturn(expectedCompany);
 
 		//When
@@ -102,7 +103,7 @@ public class ChatroomServiceTest {
 		assertThat(roomForAccount.getId()).isEqualTo(expectedChatroomId);
 		assertThat(roomForAccount.getAccountId()).isEqualTo(testAccountId);
 		verify(mockChatroomDao)
-			.storeChatroom(eq(expectedChatroomId));
+				.storeChatroom(eq(expectedChatroomId));
 	}
 
 	@Test
@@ -115,7 +116,7 @@ public class ChatroomServiceTest {
 
 		//Then
 		verify(mockRestTemplate)
-			.delete(eq(format("%s/rooms/%s", mockChattyPieHost, idOfChatroomToRemove)));
+				.delete(eq(format("%s/rooms/%s", mockChattyPieHost, idOfChatroomToRemove)));
 	}
 
 	@Test
@@ -123,8 +124,8 @@ public class ChatroomServiceTest {
 		testedChatroomService.enableUnlimitedHistory("some-chatroom-id");
 
 		verify(mockRestTemplate).put(
-			eq(format("%s/rooms/some-chatroom-id", mockChattyPieHost)),
-			eq("{\"full_history_enabled\":\"true\"}")
+				eq(format("%s/rooms/some-chatroom-id", mockChattyPieHost)),
+				eq("{\"full_history_enabled\":\"true\"}")
 		);
 	}
 
@@ -138,8 +139,8 @@ public class ChatroomServiceTest {
 
 		//Then
 		verify(mockRestTemplate).put(
-			eq(format("%s/rooms/%s", mockChattyPieHost, testChatroomId)),
-			eq("{\"full_history_enabled\":\"false\"}")
+				eq(format("%s/rooms/%s", mockChattyPieHost, testChatroomId)),
+				eq("{\"full_history_enabled\":\"false\"}")
 		);
 
 	}
@@ -150,12 +151,43 @@ public class ChatroomServiceTest {
 		List<ChatroomCreationRecord> expectedChatrooms = Lists.newArrayList();
 		ArgumentCaptor<ZonedDateTime> sinceDateCaptor = ArgumentCaptor.forClass(ZonedDateTime.class);
 		when(mockChatroomDao.readCreatedSince(sinceDateCaptor.capture()))
-			.thenReturn(expectedChatrooms);
+				.thenReturn(expectedChatrooms);
 
 		//When
 		List<ChatroomCreationRecord> actualChatroomsCreated = testedChatroomService.chatroomsCreatedOverTheLastDay();
 
 		//Then
 		assertThat(actualChatroomsCreated).isEqualTo(expectedChatrooms);
+	}
+
+	@Test
+	public void testReadIdOfAccountAssociatedWith_whenRestTemplateThrows_theExceptionIsWrappedAndReThrown() throws Exception {
+		//Given
+		String testChatroomId = UUID.randomUUID().toString();
+
+		Throwable expectedException = new RuntimeException();
+
+		when(
+				mockRestTemplate.getForObject(
+						String.format("%s/rooms/%s", mockChattyPieHost, testChatroomId),
+						Chatroom.class
+				)
+		).thenThrow(
+				expectedException
+		);
+
+		final String expectedErrorMessage = format("No chat room with id [%s] could be retrieved from %s. ",
+				testChatroomId,
+				mockChattyPieHost
+		);
+
+		//When
+		final Throwable actualThrowable = catchThrowable(() ->
+				testedChatroomService.readIdOfAccountAssociatedWith(testChatroomId)
+		);
+
+		//Then
+		assertThat(actualThrowable.getCause()).isEqualTo(expectedException);
+		assertThat(actualThrowable.getMessage()).isEqualTo(expectedErrorMessage);
 	}
 }

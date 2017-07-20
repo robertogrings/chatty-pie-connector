@@ -42,6 +42,27 @@ public class ChatroomService {
 		return createdChatroom;
 	}
 
+	public String readIdOfAccountAssociatedWith(String chatroomId) {
+		final String chattyPieChatroomResourceUrl = format(
+				CHATROOM_RESOURCE_ENDPOINT_TEMPLATE,
+				chattyPieHost,
+				chatroomId
+		);
+
+		try {
+			final Chatroom chatroom = restTemplate.getForObject(
+					chattyPieChatroomResourceUrl,
+					Chatroom.class
+			);
+			return chatroom.getAccountId();
+		} catch (Exception e) {
+			throw new RuntimeException(
+					format("No chat room with id [%s] could be retrieved from %s. ", chatroomId, chattyPieHost),
+					e
+			);
+		}
+	}
+
 	public void removeChatroom(String idOfChatroomToRemove) {
 		restTemplate.delete(
 				format(CHATROOM_RESOURCE_ENDPOINT_TEMPLATE, chattyPieHost, idOfChatroomToRemove)
