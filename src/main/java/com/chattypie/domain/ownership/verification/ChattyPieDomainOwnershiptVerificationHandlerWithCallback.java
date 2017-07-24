@@ -22,8 +22,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.retry.RecoveryCallback;
-import org.springframework.retry.RetryCallback;
-import org.springframework.retry.RetryContext;
 import org.springframework.retry.support.RetryTemplate;
 
 import com.appdirect.sdk.appmarket.domain.DomainVerificationNotificationClient;
@@ -60,21 +58,13 @@ public class ChattyPieDomainOwnershiptVerificationHandlerWithCallback {
 		//    implementation, it is not advisable to block a thread while attempting domain verification, since this
 		//    process could take a long time.
 		return CompletableFuture.runAsync(() -> retryTemplate.execute(
-				// Note: do not replace the anonymous classes with lambdas, at least until the project build uses a 
-				// more recent version of Java than 1.8_20 it confuses the compiler and the Jenkins build fails
-				new RetryCallback<Void, RuntimeException>() {
-					@Override
-					public Void doWithRetry(RetryContext context) throws RuntimeException {
-						ChattyPieDomainOwnershiptVerificationHandlerWithCallback.this.triggerValidationOnChattyPieAndCallBackMarketplace(chatroomId, domain, callbackUrl, key);
-						return null;
-					}
+				context -> {
+					ChattyPieDomainOwnershiptVerificationHandlerWithCallback.this.triggerValidationOnChattyPieAndCallBackMarketplace(chatroomId, domain, callbackUrl, key);
+					return null;
 				},
-				new RecoveryCallback<Void>() {
-					@Override
-					public Void recover(RetryContext context) throws Exception {
-						ChattyPieDomainOwnershiptVerificationHandlerWithCallback.this.signalFailureToTheMarketplace(chatroomId, domain, callbackUrl, key);
-						return null;
-					}
+				(RecoveryCallback<Void>) context -> {
+					ChattyPieDomainOwnershiptVerificationHandlerWithCallback.this.signalFailureToTheMarketplace(chatroomId, domain, callbackUrl, key);
+					return null;
 				}
 		));
 	}
@@ -93,7 +83,7 @@ public class ChattyPieDomainOwnershiptVerificationHandlerWithCallback {
 		} catch (Exception e) {
 			final String errorMessage = format(
 					"Failed reporting error to the AppDirect Marketplace on ownership verification " +
-					"for chat room %s and domain %s",
+							"for chat room %s and domain %s",
 					chatroomId,
 					domain
 			);
