@@ -12,7 +12,7 @@ spring.datasource:
     #on the `useLegacyDatetimeCode` parameter
     url: jdbc:mysql://localhost/chatty_pie_connector?useLegacyDatetimeCode=false&createDatabaseIfNotExist=true
     username: root
-    password: password
+    password: ""
 
 spring.mail:
     host: localhost

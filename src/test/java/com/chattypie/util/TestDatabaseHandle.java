@@ -68,7 +68,7 @@ public class TestDatabaseHandle {
 		MysqlDataSource mysqlDataSource = new MysqlDataSource();
 		mysqlDataSource.setURL(url);
 		mysqlDataSource.setUser("root");
-		mysqlDataSource.setPassword("password");
+		mysqlDataSource.setPassword("");
 		return mysqlDataSource;
 	}
 }

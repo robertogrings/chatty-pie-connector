@@ -44,7 +44,7 @@ public class ITTestDataSourceConfiguration {
 		log.info("Connecting to test DB at {}", databaseUrl);
 		mysqlDataSource.setURL(databaseUrl);
 		mysqlDataSource.setUser("root");
-		mysqlDataSource.setPassword("password");
+		mysqlDataSource.setPassword("");
 		return mysqlDataSource;
 	}
 

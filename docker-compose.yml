@@ -7,7 +7,7 @@ services:
       - "3306:3306"
     environment:
       MYSQL_USER: root
-      MYSQL_ROOT_PASSWORD: password
+      MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
       MYSQL_DATABASE: chatty_pie_connector
 
   smtp:

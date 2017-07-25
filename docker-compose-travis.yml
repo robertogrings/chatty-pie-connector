@@ -1,0 +1,8 @@
+# docker-compose file for creating integration test dependencies for the build on travis
+version: '2'
+services:
+
+  smtp:
+    image: greenmail/standalone:1.5.2
+    ports:
+      - "3025:3025"
