@@ -1,4 +1,6 @@
 # chatty-pie-connector
+[![Build Status](https://travis-ci.org/AppDirect/chatty-pie-connector.svg?branch=master)](https://travis-ci.org/AppDirect/chatty-pie-connector)
+[![Docker Repository on Quay](https://quay.io/repository/appdirect/chatty-pie-connector/status "Docker Repository on Quay")](https://quay.io/repository/appdirect/chatty-pie-connector)
 
 A minimal example of a connector using the service-integration SDK
 

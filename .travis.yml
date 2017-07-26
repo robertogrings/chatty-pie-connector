@@ -4,7 +4,6 @@ jdk: oraclejdk8
 
 cache:
   directories:
-  - .autoconf
   - $HOME/.m2
 
 services:
@@ -13,6 +12,11 @@ services:
 
 before_install:
   - docker-compose --file docker-compose-travis.yml up -d
-  
+
 script:
-  - mvn clean verify -B
+   - mvn clean verify -B
+
+after_success:
+  - mvn clean package docker:build -DskipTests=true &&
+    docker login -u="$QUAY_USER" -p="$QUAY_PASSWORD" quay.io &&
+    docker push quay.io/appdirect/chatty-pie-connector

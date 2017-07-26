@@ -11,4 +11,4 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
   
-exec java ${JAVA_OPTS} -Dspring.profiles.active=kubernetes -jar /${JAR_NAME} $*
+exec java ${JAVA_OPTS} -jar /${JAR_NAME} $*

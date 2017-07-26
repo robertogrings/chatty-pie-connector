@@ -232,15 +232,13 @@
 			<plugin>
 				<groupId>com.spotify</groupId>
 				<artifactId>docker-maven-plugin</artifactId>
-				<version>0.4.13</version>
+				<version>1.0.0</version>
 				<configuration>
 					<dockerDirectory>${project.basedir}</dockerDirectory>
-					<imageName>docker.appdirectondemand.com/chatty-pie-connector/chatty-pie-connector</imageName>
+					<imageName>quay.io/appdirect/chatty-pie-connector</imageName>
 					<imageTags>
 						<imageTag>${project.version}</imageTag>
 					</imageTags>
-					<serverId>docker</serverId>
-					<registryUrl>https://docker.appdirectondemand.com/v2/</registryUrl>
 				</configuration>
 			</plugin>
 			<plugin>
