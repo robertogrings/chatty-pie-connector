@@ -1,0 +1,22 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: smtp
+  labels:
+    app: smtp
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: smtp
+  template:
+    metadata:
+      labels:
+        app: smtp
+    spec:
+      containers:
+        - image: greenmail/standalone:1.5.2
+          name: smtp
+          ports:
+            - containerPort: 3025
+              name: smtp

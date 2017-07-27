@@ -67,3 +67,6 @@ your dependencies & maven plugins up-to-date. Most of those commands directly mo
     * Warning: this might take a long time to complete
 * display available maven plugin updates `./mvnw versions:display-plugin-updates`
     * If newer versions are available, you will need to manually update `pom.xml`.
+
+## Deploying the connector
+See the deployment instructions in our [wiki](https://github.com/AppDirect/chatty-pie-connector/wiki/Deployment-Procedure)

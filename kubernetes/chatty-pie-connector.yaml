@@ -1,0 +1,27 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: cp-connector
+  labels:
+    app: cp-connector
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: cp-connector
+  template:
+    metadata:
+      labels:
+        app: cp-connector
+    spec:
+      containers:
+        - image: quay.io/appdirect/chatty-pie-connector
+          name: cp-connector
+          env:
+          - name: SPRING_DATASOURCE_URL
+            value: jdbc:mysql://mysql/chatty_pie_connector?useLegacyDatetimeCode=false&createDatabaseIfNotExist=true
+          - name: SPRING_MAIL_HOST
+            value: smtp
+          ports:
+            - containerPort: 8080
+              name: cp-connector
