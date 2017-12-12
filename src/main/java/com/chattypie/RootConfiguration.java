@@ -65,6 +65,7 @@ public class RootConfiguration {
 		LogbackValve logbackValve = new LogbackValve();
 		logbackValve.setQuiet(true);
 		logbackValve.setFilename("logback-access.xml");
+		logbackValve.setAsyncSupported(true);
 		tomcat.addContextValves(logbackValve);
 		return tomcat;
 	}
