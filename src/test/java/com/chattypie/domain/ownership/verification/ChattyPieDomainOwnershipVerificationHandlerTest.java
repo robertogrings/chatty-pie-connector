@@ -24,16 +24,16 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
 @RunWith(MockitoJUnitRunner.class)
-public class ChattyPieDomainOwnershiptVerificationHandlerTest {
+public class ChattyPieDomainOwnershipVerificationHandlerTest {
 
-	private ChattyPieDomainOwnershiptVerificationHandler tested;
+	private ChattyPieDomainOwnershipVerificationHandler tested;
 
 	@Mock
-	private ChattyPieDomainOwnershiptVerificationHandlerWithCallback innerHandlerMock;
+	private ChattyPieDomainOwnershipVerificationHandlerWithCallback innerHandlerMock;
 
 	@Before
 	public void setUp() throws Exception {
-		tested = new ChattyPieDomainOwnershiptVerificationHandler(innerHandlerMock);
+		tested = new ChattyPieDomainOwnershipVerificationHandler(innerHandlerMock);
 	}
 
 	@Test

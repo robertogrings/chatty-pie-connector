@@ -21,10 +21,13 @@ import org.springframework.retry.policy.SimpleRetryPolicy;
 import org.springframework.retry.support.RetryTemplate;
 import org.springframework.web.client.RestTemplate;
 
+import com.appdirect.sdk.appmarket.domain.DomainAdditionHandler;
 import com.appdirect.sdk.appmarket.domain.DomainDnsOwnershipVerificationConfiguration;
 import com.appdirect.sdk.appmarket.domain.DomainDnsVerificationInfoHandler;
 import com.appdirect.sdk.appmarket.domain.DomainOwnershipVerificationHandler;
+import com.appdirect.sdk.appmarket.domain.DomainRemovalHandler;
 import com.appdirect.sdk.appmarket.domain.DomainVerificationNotificationClient;
+import com.chattypie.domain.ownership.verification.exception.DomainResponseErrorHandler;
 import com.chattypie.service.chattypie.chatroom.ChatroomService;
 
 public class DomainOwnershipVerificationConfiguration extends DomainDnsOwnershipVerificationConfiguration {
@@ -43,6 +46,8 @@ public class DomainOwnershipVerificationConfiguration extends DomainDnsOwnership
 
 	@Bean
 	public DomainOperationsService domainOperationsService() {
+		chattyPieRestTemplate.setErrorHandler(new DomainResponseErrorHandler());
+
 		return new DomainOperationsService(
 				chattyPieRestTemplate,
 				chattyPieHost
@@ -64,8 +69,8 @@ public class DomainOwnershipVerificationConfiguration extends DomainDnsOwnership
 	}
 
 	@Bean
-	public ChattyPieDomainOwnershiptVerificationHandlerWithCallback innerHandler() {
-		return new ChattyPieDomainOwnershiptVerificationHandlerWithCallback(chatroomService,
+	public ChattyPieDomainOwnershipVerificationHandlerWithCallback innerHandler() {
+		return new ChattyPieDomainOwnershipVerificationHandlerWithCallback(chatroomService,
 				domainOperationsService(),
 				domainVerificationNotificationClient,
 				retryTemplate()
@@ -79,6 +84,16 @@ public class DomainOwnershipVerificationConfiguration extends DomainDnsOwnership
 
 	@Override
 	public DomainOwnershipVerificationHandler domainOwnershipVerificationHandler(DomainVerificationNotificationClient client) {
-		return new ChattyPieDomainOwnershiptVerificationHandler(innerHandler());
+		return new ChattyPieDomainOwnershipVerificationHandler(innerHandler());
+	}
+
+	@Override
+	public DomainAdditionHandler domainAdditionHandler() {
+		return new ChattyPieDomainAdditionHandler(domainOperationsService());
+	}
+
+	@Override
+	public DomainRemovalHandler domainRemovalHandler() {
+		return new ChattyPieDomainRemovalHandler(domainOperationsService());
 	}
 }

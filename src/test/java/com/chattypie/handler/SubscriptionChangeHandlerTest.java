@@ -38,7 +38,7 @@ public class SubscriptionChangeHandlerTest {
 	}
 
 	private SubscriptionChange someSubscriptionChange() {
-		return new SubscriptionChange(null, null, null, null, null, null, null, null);
+		return new SubscriptionChange(null, null, null, null, null, null, null, null, null);
 	}
 
 }
