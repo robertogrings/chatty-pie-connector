@@ -1,5 +1,5 @@
 # Don't forget to point this to your own chatty-pie instance
-chatty.pie.host: https://chattypie-148413.appspot.com
+chatty.pie.host: https://chattypie-191201.appspot.com
 chatroom.report.subscriber: chatty.pie.team@yopmail.com
 # default credentials. Can be overridden through environment variables 
 connector.allowed.credentials: very-secure:password,search-1533:PrTW5GrHn6WNHHxt

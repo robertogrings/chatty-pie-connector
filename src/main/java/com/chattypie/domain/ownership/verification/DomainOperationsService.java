@@ -16,11 +16,17 @@ package com.chattypie.domain.ownership.verification;
 import static java.lang.String.format;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.web.client.RestTemplate;
 
+import com.chattypie.domain.ownership.verification.exception.DomainAlreadyExistsException;
+import com.chattypie.domain.ownership.verification.exception.DomainNotFoundException;
+
+@Slf4j
 @RequiredArgsConstructor
 public class DomainOperationsService {
+	private static final String DOMAINS_URL_TEMPLATE = "%s/accounts/%s/domains/%s";
 	private static final String DOMAIN_OWNERSHIP_PROOF_URL_TEMPLATE = "%s/accounts/%s/domains/%s/ownershipProof";
 	private static final String TRIGGER_OWNERSHIP_PROOF_URL_TEMPLATE = "%s/accounts/%s/domains/%s/triggerOwnershipVerification";
 	private final RestTemplate restTemplate;
@@ -40,5 +46,21 @@ public class DomainOperationsService {
 						null,
 						String.class
 				);
+	}
+
+	public void addDomain(String accountId, String domain) {
+		try {
+			restTemplate.postForLocation(format(DOMAINS_URL_TEMPLATE, chattyPieHost, accountId, domain), null);
+		} catch (DomainAlreadyExistsException e) {
+			log.error("Add domain request failed, response='{}'", e.getMessage(), e);
+		}
+	}
+
+	public void deleteDomain(String accountId, String domain) {
+		try {
+			restTemplate.delete(format(DOMAINS_URL_TEMPLATE, chattyPieHost, accountId, domain));
+		} catch (DomainNotFoundException e) {
+			log.error("Delete domain request failed, response='{}'", e.getMessage(), e);
+		}
 	}
 }

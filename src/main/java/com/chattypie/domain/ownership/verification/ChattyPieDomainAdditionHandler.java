@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 AppDirect, Inc. and/or its affiliates
+ * Copyright 2018 AppDirect, Inc. and/or its affiliates
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -15,16 +15,14 @@ package com.chattypie.domain.ownership.verification;
 
 import lombok.RequiredArgsConstructor;
 
-import com.appdirect.sdk.appmarket.domain.DomainOwnershipVerificationHandler;
+import com.appdirect.sdk.appmarket.domain.DomainAdditionHandler;
 
 @RequiredArgsConstructor
-public class ChattyPieDomainOwnershiptVerificationHandler implements DomainOwnershipVerificationHandler {
-
-	private final ChattyPieDomainOwnershiptVerificationHandlerWithCallback innerHandler;
+public class ChattyPieDomainAdditionHandler implements DomainAdditionHandler {
+	private final DomainOperationsService domainOperationsService;
 
 	@Override
-	public void verifyDomainOwnership(String chatroomId, String domain, String callbackUrl, String key) {
-
-		innerHandler.verifyWithRetries(chatroomId, domain, callbackUrl, key);
+	public void addDomain(String customerId, String domain) {
+		domainOperationsService.addDomain(customerId, domain);
 	}
 }

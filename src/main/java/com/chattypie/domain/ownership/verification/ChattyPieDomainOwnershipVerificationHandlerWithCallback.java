@@ -29,7 +29,7 @@ import com.chattypie.service.chattypie.chatroom.ChatroomService;
 
 @Slf4j
 @RequiredArgsConstructor
-public class ChattyPieDomainOwnershiptVerificationHandlerWithCallback {
+public class ChattyPieDomainOwnershipVerificationHandlerWithCallback {
 
 	private final ChatroomService chatroomService;
 	private final DomainOperationsService domainOperationsService;
@@ -59,11 +59,11 @@ public class ChattyPieDomainOwnershiptVerificationHandlerWithCallback {
 		//    process could take a long time.
 		return CompletableFuture.runAsync(() -> retryTemplate.execute(
 				context -> {
-					ChattyPieDomainOwnershiptVerificationHandlerWithCallback.this.triggerValidationOnChattyPieAndCallBackMarketplace(chatroomId, domain, callbackUrl, key);
+					ChattyPieDomainOwnershipVerificationHandlerWithCallback.this.triggerValidationOnChattyPieAndCallBackMarketplace(chatroomId, domain, callbackUrl, key);
 					return null;
 				},
 				(RecoveryCallback<Void>) context -> {
-					ChattyPieDomainOwnershiptVerificationHandlerWithCallback.this.signalFailureToTheMarketplace(chatroomId, domain, callbackUrl, key);
+					ChattyPieDomainOwnershipVerificationHandlerWithCallback.this.signalFailureToTheMarketplace(chatroomId, domain, callbackUrl, key);
 					return null;
 				}
 		));

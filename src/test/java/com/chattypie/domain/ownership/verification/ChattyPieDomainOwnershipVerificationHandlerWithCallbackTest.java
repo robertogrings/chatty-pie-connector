@@ -35,9 +35,9 @@ import com.appdirect.sdk.appmarket.domain.DomainVerificationNotificationClient;
 import com.chattypie.service.chattypie.chatroom.ChatroomService;
 
 @RunWith(MockitoJUnitRunner.class)
-public class ChattyPieDomainOwnershiptVerificationHandlerWithCallbackTest {
+public class ChattyPieDomainOwnershipVerificationHandlerWithCallbackTest {
 
-	private ChattyPieDomainOwnershiptVerificationHandlerWithCallback tested;
+	private ChattyPieDomainOwnershipVerificationHandlerWithCallback tested;
 
 	@Mock
 	private DomainOperationsService domainOperationsServiceMock;
@@ -50,7 +50,7 @@ public class ChattyPieDomainOwnershiptVerificationHandlerWithCallbackTest {
 
 	@Before
 	public void setUp() throws Exception {
-		tested = new ChattyPieDomainOwnershiptVerificationHandlerWithCallback(chatroomServiceMock,
+		tested = new ChattyPieDomainOwnershipVerificationHandlerWithCallback(chatroomServiceMock,
 				domainOperationsServiceMock,
 				domainVerificationNotificationClientMock,
 				retryTemplate(3)
