@@ -1,6 +1,6 @@
 FROM openjdk:8u121-jdk-alpine
 
-MAINTAINER Partner Integrations team <partner.integrations@appdirect.com>
+MAINTAINER Connectors team <pi-connector-rotation@appdirect.com>
 
 ENV JAR_NAME=chatty-pie-connector.jar
 ENV JAVA_OPTS="-Xms128M -Xmx128M -XX:MaxMetaspaceSize=64M"
